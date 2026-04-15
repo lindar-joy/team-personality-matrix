@@ -1,8 +1,10 @@
 // MrQ Team Matrix — Express + JSON-file storage
-// Intended to sit BEHIND MrQ's existing auth proxy (Cloudflare Access / IAP / etc.)
-// No app-level auth — requests reaching this service are assumed authorised.
+// App-level auth via Auth0 (OIDC) using express-openid-connect.
+// /api/health is public; everything else requires a logged-in session.
 
+import 'dotenv/config';
 import express from 'express';
+import { auth } from 'express-openid-connect';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
@@ -87,7 +89,52 @@ app.use((req, _res, next) => {
   next();
 });
 
+// ---------------------------------------------------------------------------
+// Auth0 (OIDC). Registers /login, /logout, /callback automatically.
+// Required env vars: AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET,
+// SESSION_SECRET, BASE_URL.
+// ---------------------------------------------------------------------------
+for (const key of ['AUTH0_DOMAIN', 'AUTH0_CLIENT_ID', 'AUTH0_CLIENT_SECRET', 'SESSION_SECRET', 'BASE_URL']) {
+  if (!process.env[key]) {
+    console.error(`[matrix] missing required env var: ${key}`);
+    process.exit(1);
+  }
+}
+
+app.use(auth({
+  authRequired: false,       // gated per-route below
+  auth0Logout: true,
+  baseURL:       process.env.BASE_URL,
+  clientID:      process.env.AUTH0_CLIENT_ID,
+  clientSecret:  process.env.AUTH0_CLIENT_SECRET,
+  issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
+  secret:        process.env.SESSION_SECRET,
+  authorizationParams: {
+    response_type: 'code',
+    scope: 'openid profile email'
+  }
+}));
+
+// Public
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
+
+// /api/* → 401 JSON when unauthenticated (fetch-friendly)
+app.use('/api', (req, res, next) => {
+  if (req.oidc?.isAuthenticated()) return next();
+  return res.status(401).json({ error: 'unauthenticated' });
+});
+
+// Everything else (static + SPA) → redirect to /login when unauthenticated
+app.use((req, res, next) => {
+  if (req.oidc?.isAuthenticated()) return next();
+  return res.oidc.login({ returnTo: req.originalUrl });
+});
+
+// Who am I?
+app.get('/api/me', (req, res) => {
+  const u = req.oidc.user || {};
+  res.json({ email: u.email, name: u.name, picture: u.picture });
+});
 
 app.get('/api/members', (_req, res) => res.json(members));
 

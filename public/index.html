@@ -15,6 +15,12 @@
   .header { text-align: center; margin-bottom: 20px; }
   .header h1 { font-size: 26px; font-weight: 800; color: var(--mrq-blue); letter-spacing: -0.5px; margin-bottom: 4px; }
   .header p { font-size: 13px; font-weight: 500; color: #9ca3af; }
+  .user-bar { position: fixed; top: 16px; right: 20px; display: flex; align-items: center; gap: 10px; background: white; padding: 6px 12px 6px 6px; border-radius: 999px; box-shadow: 0 2px 10px rgba(10,46,203,0.08); font-size: 13px; z-index: 100; }
+  .user-bar[hidden] { display: none; }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: #E4E7F5; }
+  .user-name { font-weight: 600; color: #0B2595; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .user-logout { color: #5B6593; text-decoration: none; padding: 4px 10px; border-radius: 999px; font-weight: 600; border-left: 1px solid #E4E7F5; margin-left: 4px; }
+  .user-logout:hover { background: #F0F2FB; color: #0B2595; }
 
   /* Add form */
   .add-form {
@@ -674,6 +680,12 @@
 </style>
 </head>
 <body>
+
+<div class="user-bar" id="userBar" hidden>
+  <img class="user-avatar" id="userAvatar" alt="" />
+  <span class="user-name" id="userName"></span>
+  <a class="user-logout" href="/logout">Logout</a>
+</div>
 
 <div class="header">
   <h1>MrQ Team Personality Map</h1>
@@ -2418,6 +2430,24 @@ function renderCheatsheet() {
 // Bootstrap: load members from API, apply URL params, render
 // ---------------------------------------------------------------------------
 async function bootstrap() {
+  // Auth check first. 401 → kick to /login (express-openid-connect handles the rest).
+  try {
+    const r = await fetch('/api/me');
+    if (r.status === 401) { window.location.href = '/login'; return; }
+    if (!r.ok) throw new Error('auth check failed: ' + r.status);
+    const me = await r.json();
+    const bar = document.getElementById('userBar');
+    const avatar = document.getElementById('userAvatar');
+    const nameEl = document.getElementById('userName');
+    if (me.picture) avatar.src = me.picture;
+    nameEl.textContent = me.name || me.email || 'Signed in';
+    bar.hidden = false;
+  } catch (e) {
+    console.error('Auth check failed:', e);
+    alert('Could not verify your session. Refresh to try again.');
+    return;
+  }
+
   try {
     members = await apiGet('/api/members');
   } catch (e) {
