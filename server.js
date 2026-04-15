@@ -8,6 +8,7 @@ import { auth } from 'express-openid-connect';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
+import crypto from 'crypto';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -91,15 +92,23 @@ app.use((req, _res, next) => {
 
 // ---------------------------------------------------------------------------
 // Auth0 (OIDC). Registers /login, /logout, /callback automatically.
-// Required env vars: AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET,
-// SESSION_SECRET, BASE_URL.
+// Required env vars: AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, BASE_URL.
+// The session-cookie secret is derived from AUTH0_CLIENT_SECRET via HMAC with
+// a domain-separating label, so it's stable across restarts without needing
+// its own env var. Bump SESSION_SECRET_VERSION to force-invalidate all sessions.
 // ---------------------------------------------------------------------------
-for (const key of ['AUTH0_DOMAIN', 'AUTH0_CLIENT_ID', 'AUTH0_CLIENT_SECRET', 'SESSION_SECRET', 'BASE_URL']) {
+for (const key of ['AUTH0_DOMAIN', 'AUTH0_CLIENT_ID', 'AUTH0_CLIENT_SECRET', 'BASE_URL']) {
   if (!process.env[key]) {
     console.error(`[matrix] missing required env var: ${key}`);
     process.exit(1);
   }
 }
+
+const SESSION_SECRET_VERSION = 'v1';
+const sessionSecret = crypto
+  .createHmac('sha256', process.env.AUTH0_CLIENT_SECRET)
+  .update(`matrix-app:session-cookie:${SESSION_SECRET_VERSION}`)
+  .digest('hex');
 
 app.use(auth({
   authRequired: false,       // gated per-route below
@@ -108,7 +117,7 @@ app.use(auth({
   clientID:      process.env.AUTH0_CLIENT_ID,
   clientSecret:  process.env.AUTH0_CLIENT_SECRET,
   issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
-  secret:        process.env.SESSION_SECRET,
+  secret:        sessionSecret,
   authorizationParams: {
     response_type: 'code',
     scope: 'openid profile email'
