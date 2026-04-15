@@ -1,0 +1,17 @@
+{
+  "name": "mrq-team-matrix",
+  "version": "1.0.0",
+  "description": "MrQ internal team personality matrix + shareable cheat sheet",
+  "private": true,
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

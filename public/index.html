@@ -1,0 +1,2450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MrQ Team Personality Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --mrq-blue: #0A2ECB; --mrq-navy: #0B2595; --mrq-white: #FFFFFF;
+    --mrq-light-blue: #00B2FF; --mrq-green: #42D486; --mrq-yellow: #FFDF00; --mrq-pink: #FF63F6;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #F0F2F8; color: #1a1a2e; min-height: 100vh; padding: 28px 20px 48px; }
+  .header { text-align: center; margin-bottom: 20px; }
+  .header h1 { font-size: 26px; font-weight: 800; color: var(--mrq-blue); letter-spacing: -0.5px; margin-bottom: 4px; }
+  .header p { font-size: 13px; font-weight: 500; color: #9ca3af; }
+
+  /* Add form */
+  .add-form {
+    max-width: 600px; margin: 0 auto 28px; background: white; border-radius: 14px;
+    padding: 20px 24px; border: 2px solid #e5e7eb; transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px rgba(10, 46, 203, 0.04);
+  }
+  .add-form:focus-within { border-color: var(--mrq-blue); box-shadow: 0 4px 20px rgba(10, 46, 203, 0.08); }
+  .add-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .add-form input[type="text"] {
+    flex: 1; padding: 9px 12px; border: 2px solid #d1d5db; border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; outline: none; background: white;
+  }
+  .add-form input[type="text"]:focus { border-color: var(--mrq-blue); }
+  .add-form .btn {
+    padding: 9px 18px; background: var(--mrq-blue); color: white; border: none; border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;
+  }
+  .add-form .btn:hover { background: var(--mrq-navy); }
+  .add-form .btn-link {
+    background: none; border: none; color: var(--mrq-blue); font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 600; cursor: pointer; padding: 4px 0; text-decoration: underline;
+  }
+
+  /* Tag inputs for self-serve form */
+  .add-tag-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .add-tag-row .tag-input {
+    flex: 1; min-width: 0; padding: 9px 12px; border: 2px solid #d1d5db; border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; outline: none; background: white;
+  }
+  .add-tag-row .tag-input:focus { border-color: var(--mrq-blue); }
+  @media (max-width: 600px) { .add-tag-row { flex-direction: column; } }
+
+  /* Pre-screen: data entry screen shown before results */
+  .prescreen {
+    max-width: 720px; margin: 40px auto 0; background: white; border-radius: 20px;
+    padding: 36px 40px 32px; border: 2px solid #e5e7eb; box-shadow: 0 8px 40px rgba(10, 46, 203, 0.06);
+    text-align: center;
+  }
+  .prescreen.prescreen-data { max-width: 680px; }
+  .prescreen.prescreen-data .add-form {
+    max-width: 100%; margin: 20px 0 0; box-shadow: none; border: 2px solid #f0f2f8;
+  }
+  .prescreen h2 {
+    font-size: 22px; font-weight: 800; color: var(--mrq-blue); letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .prescreen p.lead {
+    font-size: 13px; font-weight: 500; color: #6b7280; margin-bottom: 8px; line-height: 1.5;
+  }
+
+  /* Roster: who's been added so far, shown on the pre-screen */
+  .prescreen-roster {
+    margin: 18px 0 4px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+    text-align: left;
+  }
+  .prescreen-roster:empty { display: none; }
+  .prescreen-roster-empty {
+    width: 100%; text-align: center; font-size: 12px; font-weight: 500; color: #9ca3af; padding: 12px 0;
+  }
+  .roster-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px;
+    background: rgba(10, 46, 203, 0.05); color: var(--mrq-blue); border-radius: 8px;
+    font-size: 12px; font-weight: 700; line-height: 1; border: 1px solid rgba(10, 46, 203, 0.1);
+  }
+  .roster-chip-type { font-weight: 500; opacity: 0.6; font-size: 11px; }
+  .roster-chip-tag { font-size: 10px; font-weight: 600; color: #6b7280; opacity: 0.85; }
+  .roster-chip-remove {
+    margin-left: 2px; opacity: 0.4; cursor: pointer; font-weight: 700; font-size: 13px;
+    width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 4px;
+  }
+  .roster-chip-remove:hover { opacity: 1; background: rgba(10, 46, 203, 0.1); }
+  .prescreen-roster-summary {
+    font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.8px;
+    margin: 18px 0 8px;
+  }
+  .prescreen-roster-summary strong { color: var(--mrq-blue); font-weight: 800; }
+
+  /* Results-top slicer (replaces old slice-pill): Who are we looking at? */
+  .results-slicer {
+    max-width: 1000px; margin: 0 auto 20px; background: white; border: 2px solid #e5e7eb;
+    border-radius: 14px; padding: 16px 20px; box-shadow: 0 2px 12px rgba(10, 46, 203, 0.04);
+  }
+  .results-slicer-head {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+  }
+  .results-slicer-label {
+    font-size: 13px; font-weight: 800; color: var(--mrq-blue); letter-spacing: -0.2px;
+  }
+  .results-slicer-back {
+    background: none; border: 2px solid #e5e7eb; color: var(--mrq-blue);
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer;
+    padding: 6px 12px; border-radius: 8px; transition: all 0.15s;
+  }
+  .results-slicer-back:hover { border-color: var(--mrq-blue); background: rgba(10, 46, 203, 0.04); }
+  .results-slicer-row {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .results-slicer-select {
+    padding: 8px 12px; border: 2px solid #e5e7eb; background: #f8f9fc; border-radius: 8px;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: #374151;
+    cursor: pointer; outline: none; transition: all 0.15s; min-width: 140px; flex: 1;
+  }
+  .results-slicer-select:focus { border-color: var(--mrq-blue); background: white; }
+  .results-slicer-select.set { background: var(--mrq-blue); color: white; border-color: var(--mrq-blue); }
+  .results-slicer-count {
+    margin-left: auto; font-size: 12px; font-weight: 600; color: #6b7280; white-space: nowrap;
+  }
+  .results-slicer-count strong { color: var(--mrq-blue); font-weight: 800; }
+  .results-slicer-clear {
+    background: none; border: none; color: var(--mrq-blue); font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 700; cursor: pointer; padding: 6px 10px; border-radius: 6px;
+  }
+  .results-slicer-clear:hover { background: rgba(10, 46, 203, 0.06); }
+  .results-slicer-clear[disabled] { color: #d1d5db; cursor: not-allowed; }
+  .results-slicer-clear[disabled]:hover { background: none; }
+  .prescreen-pickers { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .prescreen-picker { flex: 1; min-width: 160px; text-align: left; }
+  .prescreen-picker label {
+    display: block; font-size: 11px; font-weight: 800; color: #6b7280;
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;
+  }
+  .prescreen-picker select {
+    width: 100%; padding: 11px 14px; border: 2px solid #e5e7eb; border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #1a1a2e;
+    background: white; outline: none; cursor: pointer; transition: all 0.15s;
+  }
+  .prescreen-picker select:focus { border-color: var(--mrq-blue); }
+  .prescreen-picker select.set { border-color: var(--mrq-blue); background: rgba(10, 46, 203, 0.04); }
+  .prescreen-actions { display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+  .prescreen-btn {
+    padding: 11px 26px; background: var(--mrq-blue); color: white; border: none; border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .prescreen-btn:hover { background: var(--mrq-navy); }
+  .prescreen-btn.secondary {
+    background: white; color: var(--mrq-blue); border: 2px solid #e5e7eb;
+  }
+  .prescreen-btn.secondary:hover { border-color: var(--mrq-blue); background: rgba(10, 46, 203, 0.04); }
+  .prescreen-divider { font-size: 11px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin: 0 4px; }
+  .prescreen-footnote { font-size: 11px; color: #9ca3af; margin-top: 20px; line-height: 1.5; }
+
+  /* Current slice pill: shown in results view so users always know what they're looking at */
+  .slice-pill {
+    max-width: 1000px; margin: 0 auto 16px; display: flex; align-items: center; gap: 12px;
+    background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 10px 16px;
+    box-shadow: 0 2px 8px rgba(10, 46, 203, 0.04); flex-wrap: wrap;
+  }
+  .slice-pill-label {
+    font-size: 11px; font-weight: 800; color: #6b7280; text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .slice-pill-crumbs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .slice-pill-crumb {
+    padding: 4px 10px; background: rgba(10, 46, 203, 0.06); color: var(--mrq-blue);
+    border-radius: 6px; font-size: 12px; font-weight: 700;
+  }
+  .slice-pill-crumb.everyone {
+    background: rgba(66, 212, 134, 0.1); color: #1a8a4a;
+  }
+  .slice-pill-sep { color: #d1d5db; font-weight: 700; }
+  .slice-pill-count { margin-left: auto; font-size: 12px; font-weight: 600; color: #6b7280; }
+  .slice-pill-count strong { color: var(--mrq-blue); font-weight: 800; }
+  .slice-pill-change {
+    background: none; border: none; color: var(--mrq-blue); font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 700; cursor: pointer; padding: 4px 8px; border-radius: 6px;
+  }
+  .slice-pill-change:hover { background: rgba(10, 46, 203, 0.06); }
+
+  /* Gate: hide until slice chosen */
+  #resultsContainer.hidden, #prescreenContainer.hidden { display: none; }
+
+  /* Global filter bar (kept for completeness but no longer rendered) */
+  .filter-bar {
+    max-width: 1000px; margin: 0 auto 16px; background: white; border: 2px solid #e5e7eb;
+    border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 2px 8px rgba(10, 46, 203, 0.04); flex-wrap: wrap;
+  }
+  .filter-bar-label {
+    font-size: 11px; font-weight: 800; color: #6b7280; text-transform: uppercase; letter-spacing: 0.8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .filter-bar-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--mrq-blue); display: inline-block; }
+  .filter-chip {
+    padding: 6px 10px; border: 2px solid #e5e7eb; background: #f8f9fc; border-radius: 8px;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: #374151;
+    cursor: pointer; outline: none; transition: all 0.15s; min-width: 120px;
+  }
+  .filter-chip:focus { border-color: var(--mrq-blue); background: white; }
+  .filter-chip.active { background: var(--mrq-blue); color: white; border-color: var(--mrq-blue); }
+  .filter-summary {
+    margin-left: auto; font-size: 12px; font-weight: 600; color: #6b7280;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .filter-summary strong { color: var(--mrq-blue); font-weight: 800; }
+  .filter-clear {
+    background: none; border: none; color: var(--mrq-blue); font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 700; cursor: pointer; padding: 4px 8px; border-radius: 6px;
+  }
+  .filter-clear:hover { background: rgba(10, 46, 203, 0.06); }
+  .filter-clear[disabled] { color: #d1d5db; cursor: not-allowed; }
+  .filter-clear[disabled]:hover { background: none; }
+
+
+
+  .pct-grid { display: flex; flex-direction: column; gap: 6px; background: #f8f9fc; border-radius: 10px; padding: 12px 14px; }
+  .pct-row {
+    display: flex; align-items: center; gap: 0;
+    padding: 4px 0;
+  }
+  .pct-toggle-group {
+    display: flex; border-radius: 8px; overflow: hidden; border: 2px solid #e5e7eb; flex: 1;
+    box-shadow: 0 1px 3px rgba(10, 46, 203, 0.06);
+  }
+  .pct-toggle {
+    padding: 8px 0; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
+    border: none; background: white; color: #b0b8c8; cursor: pointer; transition: all 0.15s;
+    flex: 1; text-align: center;
+  }
+  .pct-toggle:hover:not(.active) { background: #f0f2f8; color: #6b7280; }
+  .pct-toggle.active { background: var(--mrq-blue); color: white; font-weight: 700; }
+  .pct-toggle:first-child { border-right: 1px solid #e5e7eb; }
+  .pct-num {
+    width: 56px; padding: 8px; border: 2px solid #e5e7eb; border-radius: 8px;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; text-align: center;
+    outline: none; margin-left: 10px; color: var(--mrq-blue); transition: border-color 0.15s;
+    box-shadow: 0 1px 3px rgba(10, 46, 203, 0.06); flex-shrink: 0;
+  }
+  .pct-num:focus { border-color: var(--mrq-blue); box-shadow: 0 0 0 3px rgba(10, 46, 203, 0.1); }
+  .pct-pct-sign { font-size: 12px; font-weight: 600; color: #9ca3af; margin-left: 2px; flex-shrink: 0; }
+  .auto-type {
+    text-align: center; margin-top: 14px; padding: 10px 16px; font-size: 15px; font-weight: 800;
+    color: var(--mrq-blue); letter-spacing: 1px; background: rgba(10, 46, 203, 0.04); border-radius: 8px;
+  }
+  .auto-type span { font-weight: 500; color: #6b7280; font-size: 12px; margin-left: 8px; letter-spacing: 0; }
+
+  /* Tabs */
+  .tabs { display: flex; justify-content: center; gap: 4px; margin-bottom: 24px; }
+  .tab-btn {
+    padding: 8px 20px; border: 2px solid #e5e7eb; background: white; border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: #9ca3af; cursor: pointer;
+  }
+  .tab-btn:hover { border-color: var(--mrq-blue); color: var(--mrq-blue); }
+  .tab-btn.active { background: var(--mrq-blue); color: white; border-color: var(--mrq-blue); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Matrix */
+  .matrix-wrapper { max-width: 1000px; margin: 0 auto; position: relative; }
+  .top-axis { display: flex; margin-left: 44px; }
+  .top-axis-half { flex: 1; text-align: center; padding: 10px 0 8px; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-radius: 12px 12px 0 0; }
+  .top-axis-half.sensing { background: rgba(0, 178, 255, 0.08); color: #0080cc; }
+  .top-axis-half.intuition { background: rgba(66, 212, 134, 0.08); color: #1a8a4a; }
+  .top-axis-half span { font-size: 10px; font-weight: 500; opacity: 0.7; display: block; margin-top: 1px; letter-spacing: 0; text-transform: none; }
+  .sub-axis { display: flex; margin-left: 44px; margin-bottom: 6px; }
+  .sub-axis-cell { flex: 1; text-align: center; padding: 4px 0; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: #9ca3af; }
+  .grid-area { display: flex; }
+  .left-axis { width: 44px; display: flex; flex-direction: column; flex-shrink: 0; }
+  .left-axis-half { flex: 1; display: flex; align-items: center; justify-content: center; writing-mode: vertical-lr; transform: rotate(180deg); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-radius: 0 12px 12px 0; padding: 8px 4px; }
+  .left-axis-half.introvert { background: rgba(10, 46, 203, 0.06); color: var(--mrq-blue); }
+  .left-axis-half.extravert { background: rgba(255, 99, 246, 0.06); color: #c040c0; }
+  .left-axis-half span { font-size: 10px; font-weight: 500; opacity: 0.7; letter-spacing: 0; text-transform: none; }
+
+  .personality-grid { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 8px; }
+  .personality-cell {
+    background: white; border-radius: 12px; padding: 12px 10px 10px; min-height: 120px;
+    display: flex; flex-direction: column; align-items: center; position: relative;
+    transition: transform 0.15s, box-shadow 0.15s; border: 2px solid #e5e7eb; cursor: pointer;
+  }
+  .personality-cell:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(10, 46, 203, 0.1); }
+  .personality-cell.has-members { border-color: var(--mrq-blue); }
+  .personality-cell.selected { border-color: var(--mrq-yellow); box-shadow: 0 0 0 3px rgba(255, 223, 0, 0.3); transform: translateY(-2px); }
+  .cell-type { font-size: 17px; font-weight: 800; color: var(--mrq-blue); letter-spacing: 0.5px; margin-bottom: 1px; }
+  .cell-name { font-size: 9px; font-weight: 600; color: #b0b8c8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .cell-members { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; flex: 1; align-content: flex-start; }
+
+  .member-chip {
+    display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px 3px 3px;
+    background: var(--mrq-blue); color: white; border-radius: 18px; font-size: 11px; font-weight: 600;
+    animation: pop-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .member-chip:hover { background: var(--mrq-navy); }
+  .member-chip.chip-selected { background: var(--mrq-yellow); color: #5a4a00; }
+  .member-chip.chip-selected .member-avatar { color: #5a4a00; }
+  @keyframes pop-in { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  .member-avatar { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--mrq-blue); background: white; flex-shrink: 0; }
+  .member-remove { margin-left: 2px; cursor: pointer; opacity: 0; font-size: 13px; transition: opacity 0.15s; line-height: 1; }
+  .member-chip:hover .member-remove { opacity: 0.7; }
+  .member-remove:hover { opacity: 1 !important; }
+  .cell-count { position: absolute; top: 6px; right: 8px; font-size: 10px; font-weight: 700; color: var(--mrq-blue); opacity: 0.4; }
+  .empty-plus { color: #e0e0e0; font-size: 18px; margin-top: 2px; }
+
+  /* Tooltip for member percentages */
+  .member-chip .pct-tooltip {
+    display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+    background: #1a1a2e; color: white; padding: 10px 14px; border-radius: 10px; font-size: 10px;
+    white-space: nowrap; z-index: 100; pointer-events: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .member-chip .pct-tooltip::after {
+    content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: #1a1a2e;
+  }
+  .member-chip:hover .pct-tooltip { display: block; }
+  .pct-tooltip-row { display: flex; justify-content: space-between; gap: 12px; padding: 1px 0; }
+  .pct-tooltip-label { color: #9ca3af; }
+  .pct-tooltip-bar { display: inline-block; width: 40px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; position: relative; vertical-align: middle; margin: 0 6px; }
+  .pct-tooltip-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 2px; background: var(--mrq-yellow); }
+  .pct-tooltip-strong { font-weight: 700; }
+
+  /* Detail panel */
+  .detail-panel { max-width: 1000px; margin: 20px auto 0; background: white; border-radius: 14px; padding: 24px 28px; display: none; border: 2px solid var(--mrq-blue); animation: slide-up 0.25s ease; }
+  .detail-panel.visible { display: block; }
+  @keyframes slide-up { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+  .detail-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .detail-title { display: flex; align-items: baseline; gap: 10px; }
+  .detail-title h2 { font-size: 22px; font-weight: 800; color: var(--mrq-blue); }
+  .detail-title span { font-size: 13px; font-weight: 600; color: #9ca3af; }
+  .detail-close { width: 32px; height: 32px; border-radius: 8px; border: none; background: #f0f2f8; color: #9ca3af; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .detail-close:hover { background: var(--mrq-blue); color: white; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .detail-section h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--mrq-blue); margin-bottom: 8px; }
+  .detail-section p { font-size: 13px; font-weight: 500; color: #4b5563; line-height: 1.6; }
+  .detail-section ul { list-style: none; padding: 0; }
+  .detail-section li { font-size: 13px; font-weight: 500; color: #4b5563; padding: 4px 0 4px 16px; position: relative; line-height: 1.5; }
+  .detail-section li::before { content: ''; position: absolute; left: 0; top: 11px; width: 6px; height: 6px; border-radius: 50%; background: var(--mrq-blue); opacity: 0.3; }
+
+  /* Member profile bars in detail */
+  .member-profiles { margin-top: 16px; padding-top: 16px; border-top: 2px solid #f0f2f8; }
+  .member-profiles h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--mrq-blue); margin-bottom: 12px; }
+  .member-profile { margin-bottom: 14px; }
+  .member-profile-name { font-size: 13px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .profile-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+  .profile-bar-item { display: flex; align-items: center; gap: 6px; }
+  .profile-bar-labels { display: flex; justify-content: space-between; width: 36px; flex-shrink: 0; }
+  .profile-bar-labels span { font-size: 9px; font-weight: 700; }
+  .profile-bar-labels .active-letter { color: var(--mrq-blue); }
+  .profile-bar-labels .inactive-letter { color: #d1d5db; }
+  .profile-bar-track { flex: 1; height: 6px; background: #f0f0f5; border-radius: 3px; overflow: hidden; position: relative; }
+  .profile-bar-fill { height: 100%; border-radius: 3px; background: var(--mrq-blue); transition: width 0.3s ease; }
+  .profile-bar-pct { font-size: 10px; font-weight: 700; color: #9ca3af; min-width: 28px; text-align: right; }
+  .borderline-note { display: inline-block; margin-left: 4px; padding: 1px 6px; background: var(--mrq-yellow); color: #5a4a00; border-radius: 4px; font-size: 9px; font-weight: 700; }
+
+  /* Member detail panel */
+  .member-detail-panel {
+    max-width: 1000px; margin: 20px auto 0; background: white; border-radius: 14px; padding: 24px 28px;
+    display: none; border: 2px solid var(--mrq-navy); animation: slide-up 0.25s ease;
+  }
+  .member-detail-panel.visible { display: block; }
+  .member-detail-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .member-detail-name { display: flex; align-items: baseline; gap: 10px; }
+  .member-detail-name h2 { font-size: 22px; font-weight: 800; color: var(--mrq-blue); }
+  .member-detail-name .member-type-badge { font-size: 12px; font-weight: 700; color: white; background: var(--mrq-blue); padding: 3px 10px; border-radius: 6px; }
+  .member-detail-name .member-type-label { font-size: 13px; font-weight: 600; color: #9ca3af; }
+
+  .member-detail-body { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .member-detail-left {}
+  .member-detail-right {}
+
+  .member-pct-bars { margin-bottom: 20px; }
+  .member-pct-bars h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--mrq-blue); margin-bottom: 10px; }
+  .member-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .member-bar-dim { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; width: 50px; flex-shrink: 0; }
+  .member-bar-letters { display: flex; justify-content: space-between; width: 24px; flex-shrink: 0; }
+  .member-bar-letters span { font-size: 10px; font-weight: 800; }
+  .member-bar-track { flex: 1; height: 10px; background: #f0f0f5; border-radius: 5px; overflow: hidden; position: relative; }
+  .member-bar-center { position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: #d1d5db; z-index: 1; }
+  .member-bar-fill-left { position: absolute; right: 50%; top: 0; height: 100%; border-radius: 5px 0 0 5px; background: var(--mrq-blue); }
+  .member-bar-fill-right { position: absolute; left: 50%; top: 0; height: 100%; border-radius: 0 5px 5px 0; background: var(--mrq-blue); }
+  .member-bar-fill-borderline { background: var(--mrq-yellow) !important; }
+  .member-bar-result { font-size: 11px; font-weight: 700; color: var(--mrq-blue); min-width: 50px; }
+  .member-bar-result.borderline { color: #b89e00; }
+
+  .member-nuance { margin-top: 4px; }
+  .nuance-tag {
+    display: inline-block; padding: 4px 10px; margin: 3px 4px 3px 0; border-radius: 6px;
+    font-size: 11px; font-weight: 600; line-height: 1.4;
+  }
+  .nuance-tag.strong { background: rgba(10, 46, 203, 0.08); color: var(--mrq-blue); }
+  .nuance-tag.borderline { background: rgba(255, 223, 0, 0.2); color: #8a7400; }
+
+  .approach-box {
+    background: #f0f4ff; border-radius: 12px; padding: 16px 18px; margin-top: 16px;
+  }
+  .approach-box h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--mrq-blue); margin-bottom: 8px; }
+  .approach-tip { font-size: 13px; font-weight: 500; color: #374151; line-height: 1.6; margin-bottom: 6px; }
+
+  .member-detail-section { margin-bottom: 16px; }
+  .member-detail-section h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--mrq-blue); margin-bottom: 8px; }
+  .member-detail-section p { font-size: 13px; font-weight: 500; color: #4b5563; line-height: 1.6; }
+  .member-detail-section ul { list-style: none; padding: 0; }
+  .member-detail-section li { font-size: 13px; font-weight: 500; color: #4b5563; padding: 4px 0 4px 16px; position: relative; line-height: 1.5; }
+  .member-detail-section li::before { content: ''; position: absolute; left: 0; top: 11px; width: 6px; height: 6px; border-radius: 50%; background: var(--mrq-blue); opacity: 0.3; }
+
+  /* Compare panel */
+  .compare-panel { max-width: 1000px; margin: 20px auto 0; background: white; border-radius: 14px; padding: 24px 28px; display: none; border: 2px solid var(--mrq-green); animation: slide-up 0.25s ease; }
+  .compare-panel.visible { display: block; }
+  .compare-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .compare-header h2 { font-size: 16px; font-weight: 800; color: var(--mrq-blue); }
+  .compare-selector { max-width: 1000px; margin: 16px auto 0; display: none; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .compare-selector.visible { display: flex; }
+  .compare-selector label { font-size: 12px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; }
+  .compare-selector select { padding: 8px 14px; border: 2px solid #d1d5db; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; background: white; outline: none; cursor: pointer; min-width: 160px; }
+  .compare-vs { font-size: 14px; font-weight: 800; color: #d1d5db; }
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+  .compare-col h3 { font-size: 13px; font-weight: 800; color: var(--mrq-blue); margin-bottom: 4px; }
+  .compare-col .compare-sub { font-size: 11px; font-weight: 600; color: #9ca3af; margin-bottom: 12px; }
+
+  /* Compare dimension face-off bars */
+  .compare-dims { margin-top: 16px; padding-top: 16px; border-top: 2px solid #f0f2f8; }
+  .compare-dims h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--mrq-blue); margin-bottom: 12px; }
+  .compare-dim-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .compare-dim-label { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; width: 55px; flex-shrink: 0; }
+  .compare-dim-bars { flex: 1; display: flex; gap: 4px; align-items: center; }
+  .compare-dim-bar { flex: 1; height: 8px; background: #f0f0f5; border-radius: 4px; overflow: hidden; position: relative; }
+  .compare-dim-fill-a { height: 100%; border-radius: 4px; background: var(--mrq-blue); }
+  .compare-dim-fill-b { height: 100%; border-radius: 4px; background: var(--mrq-pink); }
+  .compare-dim-val { font-size: 10px; font-weight: 700; min-width: 24px; }
+  .compare-dim-val.a { color: var(--mrq-blue); text-align: right; }
+  .compare-dim-val.b { color: var(--mrq-pink); text-align: left; }
+  .compare-dim-mid { font-size: 9px; color: #d1d5db; font-weight: 600; }
+  .compare-legend { display: flex; gap: 16px; margin-bottom: 12px; }
+  .compare-legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; }
+  .compare-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .shared-section { margin-top: 20px; padding-top: 16px; border-top: 2px solid #f0f2f8; }
+  .shared-section h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #1a8a4a; margin-bottom: 8px; }
+  .friction-section { margin-top: 16px; }
+  .friction-section h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #c040c0; margin-bottom: 8px; }
+  .insight-text { font-size: 13px; font-weight: 500; color: #4b5563; line-height: 1.6; }
+  .tip-box { margin-top: 12px; padding: 12px 16px; background: #f0f4ff; border-radius: 10px; font-size: 12px; font-weight: 500; color: #374151; line-height: 1.6; }
+  .tip-box strong { color: var(--mrq-blue); }
+
+  /* Dimension breakdown */
+  .dimension-breakdown { max-width: 1000px; margin: 24px auto 0; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .dim-card { background: white; border-radius: 12px; padding: 14px 18px; display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 180px; flex: 1; max-width: 240px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+  .dim-card:hover { border-color: var(--mrq-blue); }
+  .dim-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; }
+  .dim-bar-container { width: 100%; display: flex; align-items: center; gap: 6px; }
+  .dim-label { font-size: 11px; font-weight: 700; min-width: 16px; text-align: center; }
+  .dim-label.left { color: var(--mrq-blue); }
+  .dim-label.right { color: #9ca3af; }
+  .dim-bar-track { flex: 1; height: 8px; background: #f0f0f5; border-radius: 4px; overflow: hidden; }
+  .dim-bar-fill { height: 100%; border-radius: 4px; background: var(--mrq-blue); transition: width 0.4s ease; }
+
+  /* Spectrum view */
+  .spectrum-wrapper { max-width: 1000px; margin: 24px auto 0; background: white; border-radius: 16px; padding: 28px 32px 34px; box-shadow: 0 4px 20px rgba(10, 46, 203, 0.08); }
+  .spectrum-intro { font-size: 13px; color: #6b7280; text-align: center; margin-bottom: 24px; }
+  .spectrum-row { margin-bottom: 36px; }
+  .spectrum-row:last-child { margin-bottom: 0; }
+  .spectrum-row-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #9ca3af; margin-bottom: 2px; text-align: center; }
+  .spectrum-row-subtitle { font-size: 12px; color: #6b7280; text-align: center; margin-bottom: 12px; font-style: italic; }
+  .spectrum-ends { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-top: 10px; }
+  .spectrum-end { display: flex; flex-direction: column; gap: 2px; max-width: 48%; }
+  .spectrum-end.right { text-align: right; align-items: flex-end; }
+  .spectrum-end-label { font-size: 12px; font-weight: 700; color: #1f2937; }
+  .spectrum-end-desc { font-size: 11px; font-weight: 500; color: #9ca3af; line-height: 1.4; }
+  .spectrum-track-wrap { position: relative; }
+  .spectrum-track { position: absolute; left: 0; right: 0; bottom: 20px; height: 6px; border-radius: 3px; }
+  .spectrum-track-EI { background: linear-gradient(90deg, #4298B4 0%, #cfe3ec 50%, #4298B4 100%); }
+  .spectrum-track-SN { background: linear-gradient(90deg, #E4AE3A 0%, #f5e4b8 50%, #E4AE3A 100%); }
+  .spectrum-track-TF { background: linear-gradient(90deg, #33A474 0%, #c4e6d5 50%, #33A474 100%); }
+  .spectrum-track-JP { background: linear-gradient(90deg, #8A4F9E 0%, #dcc8e2 50%, #8A4F9E 100%); }
+  .spectrum-track-AT { background: linear-gradient(90deg, #D0687E 0%, #f0c9d1 50%, #D0687E 100%); }
+  .spectrum-midline { position: absolute; left: 50%; top: -6px; bottom: -6px; width: 1px; background: rgba(0,0,0,0.08); transform: translateX(-0.5px); }
+  .spectrum-dot { position: absolute; transform: translateX(-50%); display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; font-size: 11px; font-weight: 700; color: white; box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: default; transition: transform 0.15s ease, box-shadow 0.15s ease; white-space: nowrap; border: 2px solid white; }
+  .spectrum-dot:hover { transform: translateX(-50%) scale(1.15); box-shadow: 0 3px 10px rgba(0,0,0,0.25); z-index: 20; }
+  .spectrum-dot-EI { background: #4298B4; }
+  .spectrum-dot-SN { background: #E4AE3A; }
+  .spectrum-dot-TF { background: #33A474; }
+  .spectrum-dot-JP { background: #8A4F9E; }
+  .spectrum-dot-AT { background: #D0687E; }
+  .spectrum-dot[data-tip]:hover::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #0B2595; color: white; font-size: 11px; font-weight: 600; padding: 6px 10px; border-radius: 6px; white-space: nowrap; pointer-events: none; z-index: 30; }
+  .spectrum-empty { text-align: center; color: #9ca3af; font-size: 13px; font-weight: 500; padding: 20px 0; }
+
+  /* Read-Out view */
+  .readout-wrapper { max-width: 1000px; margin: 24px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .readout-card { background: white; border-radius: 14px; padding: 20px 22px; box-shadow: 0 2px 12px rgba(10,46,203,0.05); }
+  .readout-card.full { grid-column: 1 / -1; }
+  .readout-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #9ca3af; margin-bottom: 10px; }
+  .readout-headline { font-size: 18px; font-weight: 700; color: #0B2595; margin-bottom: 4px; line-height: 1.3; }
+  .readout-sub { font-size: 13px; color: #6b7280; line-height: 1.5; }
+  .readout-stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f5; font-size: 13px; }
+  .readout-stat-row:last-child { border-bottom: none; }
+  .readout-stat-row span:first-child { color: #6b7280; }
+  .readout-stat-row span:last-child { font-weight: 700; color: #1f2937; }
+  .readout-list { list-style: none; padding: 0; margin: 0; }
+  .readout-list li { padding: 8px 0; font-size: 13px; color: #4b5563; line-height: 1.5; border-bottom: 1px solid #f0f0f5; display: flex; gap: 8px; align-items: flex-start; }
+  .readout-list li:last-child { border-bottom: none; }
+  .readout-list li::before { content: ""; flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--mrq-blue); margin-top: 7px; }
+  .readout-list li.good::before { background: var(--mrq-green); }
+  .readout-list li.watch::before { background: var(--mrq-pink); }
+  .readout-quadrants { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+  .readout-quadrant { padding: 12px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: 600; position: relative; }
+  .readout-quadrant-count { font-size: 22px; font-weight: 800; display: block; margin-bottom: 2px; }
+  .readout-quadrant.analysts { background: #f3f0fb; color: #6b46a8; }
+  .readout-quadrant.diplomats { background: #e8f5ee; color: #2d7a57; }
+  .readout-quadrant.sentinels { background: #e8f0fa; color: #2c5a9e; }
+  .readout-quadrant.explorers { background: #fdefdf; color: #a66a1e; }
+  .readout-pair { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f5; font-size: 13px; gap: 12px; }
+  .readout-pair:last-child { border-bottom: none; }
+  .readout-pair-label { color: #9ca3af; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; min-width: 70px; }
+  .readout-pair-ends { flex: 1; display: flex; justify-content: space-between; gap: 10px; }
+  .readout-pair-person { font-weight: 700; color: #1f2937; }
+  .readout-pair-person .pct { color: #6b7280; font-weight: 500; margin-left: 4px; font-size: 12px; }
+  .readout-empty { text-align: center; color: #9ca3af; font-size: 13px; font-weight: 500; padding: 40px 0; max-width: 1000px; margin: 24px auto 0; }
+
+  /* Situations view */
+  .situations-wrapper { max-width: 1000px; margin: 24px auto 0; }
+  .situations-intro { font-size: 13px; color: #6b7280; text-align: center; margin-bottom: 18px; }
+  .situations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .situation-card { background: white; border-radius: 12px; padding: 16px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(10,46,203,0.04); }
+  .situation-card:hover { border-color: var(--mrq-blue); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(10,46,203,0.12); }
+  .situation-card.active { border-color: var(--mrq-blue); background: #f5f7ff; }
+  .situation-icon { font-size: 24px; display: block; margin-bottom: 8px; }
+  .situation-name { font-size: 14px; font-weight: 700; color: #0B2595; margin-bottom: 2px; }
+  .situation-blurb { font-size: 11px; color: #6b7280; line-height: 1.4; }
+  .situation-detail { background: white; border-radius: 16px; padding: 24px 28px; margin-top: 16px; box-shadow: 0 4px 20px rgba(10,46,203,0.08); display: none; }
+  .situation-detail.visible { display: block; animation: slide-up 0.25s ease; }
+  .situation-detail h2 { font-size: 22px; font-weight: 800; color: #0B2595; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+  .situation-detail .tagline { font-size: 14px; color: #6b7280; margin-bottom: 20px; }
+  .situation-section { margin-bottom: 20px; }
+  .situation-section:last-child { margin-bottom: 0; }
+  .situation-section h3 { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #9ca3af; margin-bottom: 10px; }
+  .situation-people { display: flex; flex-wrap: wrap; gap: 8px; }
+  .situation-person { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .situation-person.driver { background: #e8f5ee; color: #2d7a57; }
+  .situation-person.ease { background: #fdefdf; color: #a66a1e; }
+  .situation-person .type { opacity: 0.6; font-weight: 500; }
+  .situation-move { background: #f5f7ff; border-left: 4px solid var(--mrq-blue); padding: 14px 18px; border-radius: 0 10px 10px 0; font-size: 13px; color: #1f2937; line-height: 1.55; }
+  .situation-move strong { color: #0B2595; }
+  .situations-empty { text-align: center; color: #9ca3af; font-size: 13px; font-weight: 500; padding: 40px 0; }
+  .dim-counts { display: flex; justify-content: space-between; width: 100%; font-size: 10px; font-weight: 600; color: #b0b8c8; }
+  .dim-avg { font-size: 9px; font-weight: 600; color: var(--mrq-blue); opacity: 0.7; margin-top: -2px; }
+
+  .dim-insight { max-width: 1000px; margin: 12px auto 0; background: white; border-radius: 12px; padding: 16px 20px; display: none; border-left: 4px solid var(--mrq-blue); animation: slide-up 0.2s ease; }
+  .dim-insight.visible { display: block; }
+  .dim-insight p { font-size: 13px; font-weight: 500; color: #4b5563; line-height: 1.6; }
+  .dim-insight .insight-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--mrq-blue); margin-bottom: 6px; }
+
+  .team-insights { max-width: 1000px; margin: 24px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .insight-card { background: white; border-radius: 12px; padding: 16px 20px; border-left: 4px solid var(--mrq-blue); }
+  .insight-card.strength { border-left-color: var(--mrq-green); }
+  .insight-card.watch { border-left-color: var(--mrq-pink); }
+  .insight-card h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .insight-card.strength h4 { color: #1a8a4a; }
+  .insight-card.watch h4 { color: #c040c0; }
+  .insight-card p { font-size: 13px; font-weight: 500; color: #4b5563; line-height: 1.6; }
+
+  .total-badge { text-align: center; margin-top: 20px; }
+  .total-badge span { display: inline-block; padding: 8px 20px; background: var(--mrq-blue); color: white; border-radius: 10px; font-size: 13px; font-weight: 700; }
+
+  @media (max-width: 700px) {
+    .personality-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(8, 1fr); }
+    .top-axis, .sub-axis, .left-axis { display: none; }
+    .grid-area { flex-direction: column; }
+    .add-form { margin: 0 8px 28px; }
+    .pct-grid { grid-template-columns: 1fr; }
+    .detail-grid, .compare-grid, .team-insights, .member-detail-body { grid-template-columns: 1fr; }
+    .profile-bars { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- View toggle ---------- */
+  .view-toggle {
+    max-width: 1120px;
+    margin: 0 auto 24px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .view-btn {
+    background: white;
+    border: 1px solid #E4E7F5;
+    color: #5B6593;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .view-btn:hover { border-color: #0A2ECB; color: #0A2ECB; }
+  .view-btn.active { background: #0A2ECB; color: white; border-color: #0A2ECB; }
+  .view-share {
+    margin-left: auto;
+    background: #FFDF00;
+    color: #0B2595;
+    border: none;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+  }
+  .view-share:hover { transform: translateY(-1px); }
+
+  /* ---------- Cheat sheet (embedded) ---------- */
+  .cs-wrap { max-width: 1120px; margin: 0 auto 48px; padding: 0 20px; }
+  .cs-hero {
+    background: #0A2ECB;
+    color: white;
+    border-radius: 20px;
+    padding: 40px 32px;
+    margin-bottom: 28px;
+  }
+  .cs-kicker { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; opacity: 0.8; margin-bottom: 10px; }
+  .cs-hero h2 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1.05; }
+  .cs-hero h2 .hl { color: #FFDF00; }
+  .cs-hero p { max-width: 720px; margin: 0; font-size: 16px; opacity: 0.92; }
+  .cs-meta { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .cs-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.28); font-size: 12px; font-weight: 600; }
+  .cs-pill b { font-weight: 800; }
+  .cs-diag { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(10,46,203,0.12); padding: 28px 32px; margin-bottom: 28px; }
+  .cs-diag-headline { font-size: clamp(20px, 2.5vw, 26px); font-weight: 800; letter-spacing: -0.01em; margin: 0 0 16px; color: #0A2ECB; }
+  .cs-diag-headline .hl { background: #FFDF00; padding: 0 6px; border-radius: 4px; color: #0B2595; }
+  .cs-diag-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .cs-diag-item { background: #F4F6FF; border-radius: 12px; padding: 14px 16px; border-left: 4px solid #0A2ECB; }
+  .cs-diag-item.green { border-left-color: #42D486; }
+  .cs-diag-item.yellow { border-left-color: #FFDF00; }
+  .cs-diag-item.pink { border-left-color: #FF63F6; }
+  .cs-diag-item.sky { border-left-color: #00B2FF; }
+  .cs-diag-item h3 { margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; color: #5B6593; }
+  .cs-diag-item p { margin: 0; font-size: 14px; color: #0B2595; }
+  .cs-section-head { display: flex; align-items: baseline; justify-content: space-between; margin: 28px 4px 16px; }
+  .cs-section-head h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; margin: 0; color: #0B2595; }
+  .cs-section-head .sub { color: #5B6593; font-size: 13px; }
+  .cs-profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .cs-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(10,46,203,0.08); display: flex; flex-direction: column; gap: 12px; }
+  .cs-card-head { display: flex; align-items: flex-start; gap: 12px; justify-content: space-between; }
+  .cs-card-name { font-size: 18px; font-weight: 800; margin: 0; line-height: 1.15; color: #0B2595; }
+  .cs-card-role { font-size: 12px; color: #5B6593; margin: 2px 0 0; font-weight: 500; }
+  .cs-badge { font-weight: 800; font-size: 11px; letter-spacing: 0.06em; color: white; background: #0A2ECB; padding: 5px 9px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+  .cs-bars { display: flex; flex-direction: column; gap: 5px; }
+  .cs-bar { display: grid; grid-template-columns: 20px 1fr 20px; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #5B6593; }
+  .cs-bar .track { position: relative; height: 5px; background: #E4E7F5; border-radius: 999px; }
+  .cs-bar .track .dot { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 11px; height: 11px; border-radius: 50%; background: #0A2ECB; border: 2px solid white; box-shadow: 0 1px 3px rgba(11,37,149,0.4); }
+  .cs-bar .left { text-align: right; }
+  .cs-bar .right { text-align: left; }
+  .cs-block { font-size: 13px; line-height: 1.45; color: #0B2595; }
+  .cs-block h4 { margin: 0 0 3px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #5B6593; font-weight: 800; }
+  .cs-block p { margin: 0; }
+  .cs-block ul { margin: 0; padding-left: 16px; list-style: disc; }
+  .cs-block ul li { margin: 2px 0; }
+  .cs-empty { text-align: center; color: #5B6593; padding: 60px 20px; background: white; border-radius: 20px; }
+  .cs-empty h2 { margin: 0 0 8px; color: #0B2595; font-size: 22px; }
+
+  /* Team scope picker inside cheat sheet */
+  .cs-scope { background: white; border-radius: 16px; padding: 14px 20px; margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; box-shadow: 0 4px 16px rgba(10,46,203,0.06); }
+  .cs-scope-label { font-size: 13px; font-weight: 700; color: #0B2595; }
+  .cs-scope select { font-family: inherit; font-size: 13px; padding: 6px 10px; border-radius: 8px; border: 1px solid #E4E7F5; color: #0B2595; background: white; }
+  .cs-scope-count { color: #5B6593; font-size: 12px; margin-left: auto; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>MrQ Team Personality Map</h1>
+  <p>Who are we actually working with? Let's find out.</p>
+</div>
+
+<!-- View toggle: Matrix (edit) vs Cheat Sheet (share) -->
+<div class="view-toggle" id="viewToggle">
+  <button class="view-btn active" data-view="matrix"     onclick="setView('matrix')">Matrix &middot; edit & explore</button>
+  <button class="view-btn"        data-view="cheatsheet" onclick="setView('cheatsheet')">Cheat Sheet &middot; share</button>
+  <button class="view-share" id="shareBtn" onclick="copyShareLink()" style="display:none;">Copy share link</button>
+</div>
+
+<!-- Cheat sheet view (shareable) -->
+<div id="cheatsheetContainer" class="hidden"></div>
+
+<!-- Pre-screen: drop your team in (data entry) -->
+<div id="prescreenContainer">
+  <div class="prescreen prescreen-data">
+    <h2>Drop your team in</h2>
+    <p class="lead">Add yourself and your colleagues. When you're ready, jump to the team views — you can come back and add more anytime.</p>
+
+<!-- Add form lives inside the pre-screen now -->
+<div class="add-form">
+  <div class="add-row" style="margin-bottom:8px;">
+    <input type="text" id="nameInput" placeholder="Who's joining?" />
+  </div>
+  <div class="add-tag-row">
+    <select id="teamInput" class="tag-input">
+      <option value="">Team —</option>
+      <option value="Product">Product</option>
+      <option value="Engineering">Engineering</option>
+      <option value="QA">QA</option>
+      <option value="Design">Design</option>
+    </select>
+    <select id="tribeInput" class="tag-input">
+      <option value="">Tribe —</option>
+      <option value="Onboarding">Onboarding</option>
+      <option value="Entertainment">Entertainment</option>
+      <option value="Platform">Platform</option>
+      <option value="PQ">PQ</option>
+    </select>
+    <select id="squadInput" class="tag-input">
+      <option value="">Squad —</option>
+      <option value="Acquisition">Acquisition</option>
+      <option value="P&amp;V">P&amp;V</option>
+      <option value="C&amp;R">C&amp;R</option>
+      <option value="Goosicorn">Goosicorn</option>
+      <option value="Platform">Platform</option>
+      <option value="PQ">PQ</option>
+    </select>
+  </div>
+  <div>
+    <p style="font-size:11px;font-weight:500;color:#9ca3af;margin-bottom:10px;">Match what's on their results page — pick the trait, type the number</p>
+    <div class="pct-grid" id="pctInputs">
+      <div class="pct-row" data-dim="EI">
+        <div class="pct-toggle-group">
+          <button class="pct-toggle" data-val="E" onclick="toggleDim(this,'EI','E')">Extraverted</button>
+          <button class="pct-toggle" data-val="I" onclick="toggleDim(this,'EI','I')">Introverted</button>
+        </div>
+        <input type="number" min="50" max="100" class="pct-num" id="numEI" placeholder="—" oninput="updateFromInputs()">
+        <span class="pct-pct-sign">%</span>
+      </div>
+      <div class="pct-row" data-dim="SN">
+        <div class="pct-toggle-group">
+          <button class="pct-toggle" data-val="S" onclick="toggleDim(this,'SN','S')">Observant</button>
+          <button class="pct-toggle" data-val="N" onclick="toggleDim(this,'SN','N')">Intuitive</button>
+        </div>
+        <input type="number" min="50" max="100" class="pct-num" id="numSN" placeholder="—" oninput="updateFromInputs()">
+        <span class="pct-pct-sign">%</span>
+      </div>
+      <div class="pct-row" data-dim="TF">
+        <div class="pct-toggle-group">
+          <button class="pct-toggle" data-val="T" onclick="toggleDim(this,'TF','T')">Thinking</button>
+          <button class="pct-toggle" data-val="F" onclick="toggleDim(this,'TF','F')">Feeling</button>
+        </div>
+        <input type="number" min="50" max="100" class="pct-num" id="numTF" placeholder="—" oninput="updateFromInputs()">
+        <span class="pct-pct-sign">%</span>
+      </div>
+      <div class="pct-row" data-dim="JP">
+        <div class="pct-toggle-group">
+          <button class="pct-toggle" data-val="J" onclick="toggleDim(this,'JP','J')">Judging</button>
+          <button class="pct-toggle" data-val="P" onclick="toggleDim(this,'JP','P')">Prospecting</button>
+        </div>
+        <input type="number" min="50" max="100" class="pct-num" id="numJP" placeholder="—" oninput="updateFromInputs()">
+        <span class="pct-pct-sign">%</span>
+      </div>
+      <div class="pct-row" data-dim="AT">
+        <div class="pct-toggle-group">
+          <button class="pct-toggle" data-val="A" onclick="toggleDim(this,'AT','A')">Assertive</button>
+          <button class="pct-toggle" data-val="T" onclick="toggleDim(this,'AT','T')">Turbulent</button>
+        </div>
+        <input type="number" min="50" max="100" class="pct-num" id="numAT" placeholder="—" oninput="updateFromInputs()">
+        <span class="pct-pct-sign">%</span>
+      </div>
+    </div>
+    <div class="auto-type" id="autoType">????-?<span>Pick the traits to see the type</span></div>
+    <button class="btn" onclick="addMember()" style="width:100%;margin-top:12px;padding:11px 18px;font-size:14px;border-radius:10px;">Drop them in</button>
+  </div>
+</div>
+<!-- /add-form -->
+
+    <!-- Roster: who's been added so far -->
+    <div class="prescreen-roster" id="prescreenRoster"></div>
+
+    <div class="prescreen-actions">
+      <button class="prescreen-btn" onclick="enterResults(true)">See the team &rarr;</button>
+    </div>
+    <p class="prescreen-footnote">You'll land on the full team view. Use the picker at the top to slice by team, tribe or squad.</p>
+  </div>
+</div>
+<!-- /prescreenContainer -->
+
+<!-- Results container (hidden until 'See the team' clicked) -->
+<div id="resultsContainer" class="hidden">
+
+<!-- Slice picker at top of results: who are we looking at? -->
+<div class="results-slicer">
+  <div class="results-slicer-head">
+    <div class="results-slicer-label">Who are we looking at?</div>
+    <button class="results-slicer-back" onclick="backToPrescreen()">+ Add or edit people</button>
+  </div>
+  <div class="results-slicer-row">
+    <select id="filterTeam"  class="results-slicer-select" onchange="onFilterChange('team',  this.value)"></select>
+    <select id="filterTribe" class="results-slicer-select" onchange="onFilterChange('tribe', this.value)"></select>
+    <select id="filterSquad" class="results-slicer-select" onchange="onFilterChange('squad', this.value)"></select>
+    <span class="results-slicer-count" id="resultsSlicerCount"></span>
+    <button class="results-slicer-clear" id="resultsSlicerClear" onclick="clearFilters()" disabled>Reset</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('map')">The Map</button>
+  <button class="tab-btn" onclick="switchTab('spectrum')">The Spectrum</button>
+  <button class="tab-btn" onclick="switchTab('readout')">The Read-Out</button>
+  <button class="tab-btn" onclick="switchTab('situations')">Situations</button>
+  <button class="tab-btn" onclick="switchTab('compare')">Head to Head</button>
+</div>
+
+<div class="tab-panel active" id="tab-map">
+  <div class="matrix-wrapper">
+    <div class="top-axis">
+      <div class="top-axis-half sensing">Sensing<span>Practical &amp; detail-oriented</span></div>
+      <div class="top-axis-half intuition">Intuition<span>Big-picture &amp; abstract</span></div>
+    </div>
+    <div class="sub-axis">
+      <div class="sub-axis-cell">Thinking</div>
+      <div class="sub-axis-cell">Feeling</div>
+      <div class="sub-axis-cell">Feeling</div>
+      <div class="sub-axis-cell">Thinking</div>
+    </div>
+    <div class="grid-area">
+      <div class="left-axis">
+        <div class="left-axis-half extravert">Extravert<span>&nbsp; Outward energy</span></div>
+        <div class="left-axis-half introvert">Introvert<span>&nbsp; Inward energy</span></div>
+      </div>
+      <div class="personality-grid" id="grid"></div>
+    </div>
+  </div>
+  <div class="member-detail-panel" id="memberDetailPanel"></div>
+  <div class="detail-panel" id="detailPanel"></div>
+  <div class="dimension-breakdown" id="dimensions"></div>
+  <div class="dim-insight" id="dimInsight"></div>
+  <div class="team-insights" id="teamInsights"></div>
+</div>
+
+<div class="tab-panel" id="tab-spectrum">
+  <div class="spectrum-wrapper">
+    <div class="spectrum-intro">Where everyone sits on each scale. Hover a dot for the full breakdown.</div>
+    <div id="spectrumRows"></div>
+    <div class="spectrum-empty" id="spectrumEmpty" style="display:none;">Nobody here yet — get adding.</div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-readout">
+  <div class="readout-wrapper" id="readoutContent"></div>
+  <div class="readout-empty" id="readoutEmpty" style="display:none;">Add a few people first and we'll tell you what this team is actually made of.</div>
+</div>
+
+<div class="tab-panel" id="tab-situations">
+  <div class="situations-wrapper">
+    <div class="situations-intro">Pick a situation and we'll tell you who leans in, who needs a run-up, and what to do about it.</div>
+    <div class="situations-grid" id="situationsGrid"></div>
+    <div class="situation-detail" id="situationDetail"></div>
+    <div class="situations-empty" id="situationsEmpty" style="display:none;">Add a few people first — scenarios need a team to work with.</div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-compare">
+  <div class="compare-selector visible">
+    <label>Person A</label>
+    <select id="compareA" onchange="renderCompare()"></select>
+    <div class="compare-vs">vs</div>
+    <label>Person B</label>
+    <select id="compareB" onchange="renderCompare()"></select>
+  </div>
+  <div class="compare-panel visible" id="comparePanel">
+    <p style="text-align:center;color:#9ca3af;font-size:13px;font-weight:500;padding:20px 0;">Get some people on the map first, then pick two to compare.</p>
+  </div>
+</div>
+
+<div class="total-badge" id="totalBadge"></div>
+
+</div><!-- /resultsContainer -->
+
+<script>
+const GRID = [
+  [{ code: 'ESTJ', name: 'Executive' }, { code: 'ESFJ', name: 'Consul' }, { code: 'ENFJ', name: 'Protagonist' }, { code: 'ENTJ', name: 'Commander' }],
+  [{ code: 'ESTP', name: 'Entrepreneur' }, { code: 'ESFP', name: 'Entertainer' }, { code: 'ENFP', name: 'Campaigner' }, { code: 'ENTP', name: 'Debater' }],
+  [{ code: 'ISTP', name: 'Virtuoso' }, { code: 'ISFP', name: 'Adventurer' }, { code: 'INFP', name: 'Mediator' }, { code: 'INTP', name: 'Logician' }],
+  [{ code: 'ISTJ', name: 'Logistician' }, { code: 'ISFJ', name: 'Defender' }, { code: 'INFJ', name: 'Advocate' }, { code: 'INTJ', name: 'Architect' }],
+];
+const ALL_TYPES = GRID.flat();
+const TYPE_NAMES = {}; ALL_TYPES.forEach(t => TYPE_NAMES[t.code] = t.name);
+
+// Member: { id, name, typeCode, pcts: { EI, SN, TF, JP, AT }, identity, team, tribe, squad }
+// pcts: 0 = fully first letter (E, S, T, J), 100 = fully second (I, N, F, P)
+// Data is loaded from the backend API on boot (see bootstrap() at the bottom of this script).
+let members = [];
+
+// --- API helpers ---
+async function apiGet(path)         { const r = await fetch(path); if (!r.ok) throw new Error(r.statusText); return r.json(); }
+async function apiJson(method, p, b) {
+  const r = await fetch(p, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
+  if (!r.ok) { let msg = r.statusText; try { const j = await r.json(); msg = j.error || msg; } catch(e){} throw new Error(msg); }
+  if (r.status === 204) return null;
+  return r.json();
+}
+const apiPost   = (p, b) => apiJson('POST', p, b);
+const apiPut    = (p, b) => apiJson('PUT', p, b);
+const apiDelete = (p)    => fetch(p, { method: 'DELETE' }).then(r => { if (!r.ok) throw new Error(r.statusText); });
+
+let selectedType = null;
+let selectedMember = null; // index into members[]
+
+const TRAIT_NAMES = {
+  EI: { E: 'Extraverted', I: 'Introverted' },
+  SN: { S: 'Observant', N: 'Intuitive' },
+  TF: { T: 'Thinking', F: 'Feeling' },
+  JP: { J: 'Judging', P: 'Prospecting' },
+  AT: { A: 'Assertive', T: 'Turbulent' }
+};
+
+// Which letter is the "second" (right-side / 100-end) for each dimension
+const DIM_SECOND = { EI: 'I', SN: 'N', TF: 'F', JP: 'P', AT: 'T' };
+
+function getActiveToggle(dim) {
+  const row = document.querySelector(`.pct-row[data-dim="${dim}"]`);
+  const active = row.querySelector('.pct-toggle.active');
+  return active ? active.getAttribute('data-val') : null;
+}
+
+function toggleDim(btn, dim, letter) {
+  const row = btn.closest('.pct-row');
+  row.querySelectorAll('.pct-toggle').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Auto-fill 50 if number is empty
+  const numInput = document.getElementById('num' + dim);
+  if (!numInput.value) numInput.value = 50;
+  updateFromInputs();
+}
+
+function getInputPcts() {
+  const dims = ['EI', 'SN', 'TF', 'JP', 'AT'];
+  const pcts = {};
+  let allSet = true;
+  dims.forEach(dim => {
+    const letter = getActiveToggle(dim);
+    const numInput = document.getElementById('num' + dim);
+    let num = parseInt(numInput.value);
+    if (!letter || isNaN(num)) {
+      pcts[dim] = null;
+      allSet = false;
+      return;
+    }
+    num = Math.max(50, Math.min(100, num));
+    // Convert to internal 0-100 scale where 0 = first letter, 100 = second letter
+    if (letter === DIM_SECOND[dim]) {
+      pcts[dim] = num; // e.g. I 73% → internal 73
+    } else {
+      pcts[dim] = 100 - num; // e.g. E 65% → internal 35
+    }
+  });
+  pcts._allSet = allSet;
+  return pcts;
+}
+
+function pctToLetter(val, letters) { return val < 50 ? letters[0] : letters[1]; }
+
+function updateFromInputs() {
+  const pcts = getInputPcts();
+  if (!pcts._allSet) {
+    // Build partial code with ? for unset dimensions
+    const ei = pcts.EI !== null ? pctToLetter(pcts.EI, 'EI') : '?';
+    const sn = pcts.SN !== null ? pctToLetter(pcts.SN, 'SN') : '?';
+    const tf = pcts.TF !== null ? pctToLetter(pcts.TF, 'TF') : '?';
+    const jp = pcts.JP !== null ? pctToLetter(pcts.JP, 'JP') : '?';
+    const at = pcts.AT !== null ? (pcts.AT < 50 ? 'A' : 'T') : '?';
+    const partial = `${ei}${sn}${tf}${jp}-${at}`;
+    const code = ei + sn + tf + jp;
+    const name = TYPE_NAMES[code] || 'Pick the traits to see the type';
+    document.getElementById('autoType').innerHTML = `${partial}<span>${name}</span>`;
+    return;
+  }
+  const code = pctToLetter(pcts.EI, 'EI') + pctToLetter(pcts.SN, 'SN') + pctToLetter(pcts.TF, 'TF') + pctToLetter(pcts.JP, 'JP');
+  const identity = pcts.AT < 50 ? 'A' : 'T';
+  const name = TYPE_NAMES[code] || '';
+  document.getElementById('autoType').innerHTML = `${code}-${identity}<span>${name}</span>`;
+}
+updateFromInputs();
+
+
+function codeFromPcts(p) {
+  return pctToLetter(p.EI, 'EI') + pctToLetter(p.SN, 'SN') + pctToLetter(p.TF, 'TF') + pctToLetter(p.JP, 'JP');
+}
+
+// Canonical tag option lists (kept in sync with the form selects below)
+const TAG_OPTIONS = {
+  team:   ['Product', 'Engineering', 'QA', 'Design'],
+  tribe:  ['Onboarding', 'Entertainment', 'Platform', 'PQ'],
+  squad:  ['Acquisition', 'P&V', 'C&R', 'Goosicorn', 'Platform', 'PQ']
+};
+const TAG_LABEL = { team: 'Team', tribe: 'Tribe', squad: 'Squad' };
+
+async function addMember() {
+  const inp = document.getElementById('nameInput');
+  const name = inp.value.trim();
+  if (!name) { inp.focus(); return; }
+  const pcts = getInputPcts();
+  if (!pcts._allSet) { alert('Pick a trait and percentage for each dimension first.'); return; }
+  const cleanPcts = { EI: pcts.EI, SN: pcts.SN, TF: pcts.TF, JP: pcts.JP, AT: pcts.AT };
+  const identity = cleanPcts.AT < 50 ? 'A' : 'T';
+  const tInp = document.getElementById('teamInput');
+  const trInp = document.getElementById('tribeInput');
+  const sInp = document.getElementById('squadInput');
+  const payload = {
+    name,
+    typeCode: codeFromPcts(cleanPcts),
+    pcts: cleanPcts,
+    identity,
+    team:  tInp ? tInp.value : '',
+    tribe: trInp ? trInp.value : '',
+    squad: sInp ? sInp.value : ''
+  };
+  try {
+    const saved = await apiPost('/api/members', payload);
+    members.push(saved);
+  } catch (e) {
+    alert('Could not save: ' + e.message);
+    return;
+  }
+  // Reset inputs
+  ['numEI', 'numSN', 'numTF', 'numJP', 'numAT'].forEach(id => document.getElementById(id).value = '');
+  document.querySelectorAll('.pct-row').forEach(row => {
+    row.querySelectorAll('.pct-toggle').forEach(b => b.classList.remove('active'));
+  });
+  updateFromInputs();
+  inp.value = '';
+  if (tInp) tInp.value = '';
+  if (trInp) trInp.value = '';
+  if (sInp) sInp.value = '';
+  inp.focus();
+  render();
+}
+
+function uniqTagValues(key) {
+  const set = new Set();
+  members.forEach(m => { if (m && m[key]) set.add(m[key]); });
+  return Array.from(set).sort((a, b) => a.localeCompare(b));
+}
+
+async function removeMember(idx) {
+  const m = members[idx];
+  if (!m) return;
+  if (!confirm(`Remove ${m.name}?`)) return;
+  try { await apiDelete('/api/members/' + m.id); }
+  catch (e) { alert('Could not remove: ' + e.message); return; }
+  if (selectedMember === idx) selectedMember = null;
+  else if (selectedMember !== null && selectedMember > idx) selectedMember--;
+  members.splice(idx, 1);
+  render();
+}
+function selectMember(idx) {
+  selectedMember = selectedMember === idx ? null : idx;
+  selectedType = null; // close type panel when opening member
+  render();
+}
+function selectType(code) {
+  selectedType = selectedType === code ? null : code;
+  selectedMember = null; // close member panel when opening type
+  render();
+}
+// save() is a no-op now: persistence happens per-mutation via apiPost/apiPut/apiDelete.
+function save() { /* noop — data lives on the server */ }
+document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') addMember(); });
+
+function switchTab(tab) {
+  const order = ['map', 'spectrum', 'readout', 'situations', 'compare'];
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', order[i] === tab));
+  document.getElementById('tab-map').classList.toggle('active', tab === 'map');
+  document.getElementById('tab-spectrum').classList.toggle('active', tab === 'spectrum');
+  document.getElementById('tab-readout').classList.toggle('active', tab === 'readout');
+  document.getElementById('tab-situations').classList.toggle('active', tab === 'situations');
+  document.getElementById('tab-compare').classList.toggle('active', tab === 'compare');
+  if (tab === 'compare') populateCompareSelects();
+  if (tab === 'spectrum') renderSpectrum();
+  if (tab === 'readout') renderReadOut();
+  if (tab === 'situations') renderSituations();
+}
+
+// --- Filters / slice picker --------------------------------------------------
+let activeFilters = { team: '', tribe: '', squad: '' };
+// Pre-screen gate: false = show prescreen, true = show results
+let hasChosenSlice = false;
+
+function passesFilter(m) {
+  if (activeFilters.team  && (m.team  || '') !== activeFilters.team)  return false;
+  if (activeFilters.tribe && (m.tribe || '') !== activeFilters.tribe) return false;
+  if (activeFilters.squad && (m.squad || '') !== activeFilters.squad) return false;
+  return true;
+}
+
+function visibleMembers() {
+  return members.filter(passesFilter);
+}
+
+// Same filtering but preserves original-array index as `_idx` (for grid/detail lookups)
+function visibleMembersIndexed() {
+  return members.map((m, i) => Object.assign({}, m, { _idx: i })).filter(passesFilter);
+}
+
+// --- Filter-bar selects (top of results): populated with canonical + present values ---
+function populateFilterSelect(selId, key) {
+  const sel = document.getElementById(selId);
+  if (!sel) return;
+  const current = activeFilters[key];
+  const present = new Set(uniqTagValues(key));
+  TAG_OPTIONS[key].forEach(v => present.add(v));
+  const opts = Array.from(present).sort((a,b) => a.localeCompare(b));
+  sel.innerHTML = `<option value="">Any ${TAG_LABEL[key].toLowerCase()}</option>` +
+    opts.map(v => `<option value="${v}"${v === current ? ' selected' : ''}>${v}</option>`).join('');
+  sel.classList.toggle('set', !!current);
+}
+
+function onFilterChange(kind, value) {
+  activeFilters[kind] = value || '';
+  if (selectedMember !== null && members[selectedMember] && !passesFilter(members[selectedMember])) selectedMember = null;
+  render();
+}
+
+function clearFilters() {
+  activeFilters = { team: '', tribe: '', squad: '' };
+  ['filterTeam', 'filterTribe', 'filterSquad'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  render();
+}
+
+function renderResultsSlicer() {
+  populateFilterSelect('filterTeam',  'team');
+  populateFilterSelect('filterTribe', 'tribe');
+  populateFilterSelect('filterSquad', 'squad');
+  const v = visibleMembers().length;
+  const t = members.length;
+  const anyActive = !!(activeFilters.team || activeFilters.tribe || activeFilters.squad);
+  const count = document.getElementById('resultsSlicerCount');
+  if (count) count.innerHTML = anyActive
+    ? `<strong>${v}</strong> of <strong>${t}</strong>`
+    : `<strong>${t}</strong> on the map`;
+  const clearBtn = document.getElementById('resultsSlicerClear');
+  if (clearBtn) clearBtn.disabled = !anyActive;
+}
+
+// --- Roster on the pre-screen: shows who's been added so far ---
+function renderRoster() {
+  const host = document.getElementById('prescreenRoster');
+  if (!host) return;
+  if (members.length === 0) {
+    host.innerHTML = `<div class="prescreen-roster-empty">No-one in yet — add yourself first.</div>`;
+    return;
+  }
+  const summary = `<div class="prescreen-roster-summary"><strong>${members.length}</strong> ${members.length === 1 ? 'person' : 'people'} added</div>`;
+  const chips = members.map((m, i) => {
+    const tagBits = [m.team, m.tribe, m.squad].filter(Boolean).join(' · ');
+    const tagHtml = tagBits ? `<span class="roster-chip-tag">${tagBits}</span>` : '';
+    const id = m.identity ? `-${m.identity}` : '';
+    return `<span class="roster-chip">
+      ${m.name}
+      <span class="roster-chip-type">${m.typeCode}${id}</span>
+      ${tagHtml}
+      <span class="roster-chip-remove" onclick="event.stopPropagation();removeMember(${i})" title="Remove">&times;</span>
+    </span>`;
+  }).join('');
+  host.innerHTML = summary + chips;
+}
+
+// --- Pre-screen / results gating -------------------------------------------
+function enterResults() {
+  hasChosenSlice = true;
+  if (selectedMember !== null && members[selectedMember] && !passesFilter(members[selectedMember])) selectedMember = null;
+  renderGate();
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function backToPrescreen() {
+  hasChosenSlice = false;
+  renderGate();
+  renderRoster();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderGate() {
+  const pre = document.getElementById('prescreenContainer');
+  const res = document.getElementById('resultsContainer');
+  if (pre) pre.classList.toggle('hidden', hasChosenSlice);
+  if (res) res.classList.toggle('hidden', !hasChosenSlice);
+}
+
+function render() { renderResultsSlicer(); renderRoster(); renderGrid(); renderMemberDetail(); renderDimensions(); renderDetail(); renderTeamInsights(); renderTotal(); renderSpectrum(); renderReadOut(); renderSituations(); populateCompareSelects(); }
+
+// Smart initials for the whole team: short where possible, longer to break ties
+function buildInitialsMap(memberList) {
+  const map = {};
+  memberList.forEach(m => {
+    const parts = m.name.trim().split(/\s+/);
+    if (parts.length > 1) map[m.name] = (parts[0][0] + parts[1][0]).toUpperCase();
+    else map[m.name] = parts[0][0].toUpperCase();
+  });
+  // Break single-letter collisions by using first two letters
+  const counts = {};
+  Object.values(map).forEach(v => counts[v] = (counts[v]||0) + 1);
+  memberList.forEach(m => {
+    if (counts[map[m.name]] > 1 && map[m.name].length === 1) {
+      const parts = m.name.trim().split(/\s+/);
+      if (parts[0].length >= 2) {
+        map[m.name] = parts[0][0].toUpperCase() + parts[0][1].toLowerCase();
+      }
+    }
+  });
+  return map;
+}
+
+function renderSpectrum() {
+  const host = document.getElementById('spectrumRows');
+  const empty = document.getElementById('spectrumEmpty');
+  if (!host) return;
+  const withPcts = visibleMembers().filter(m => m.pcts);
+  if (withPcts.length === 0) {
+    host.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const initialsMap = buildInitialsMap(withPcts);
+
+  const dims = [
+    { key: 'EI', label: 'Energy',   subtitle: 'Where your battery recharges',
+      left: 'Extraverted', leftDesc: 'Gets fizzed up by people and buzz. Thinks out loud.',
+      right: 'Introverted', rightDesc: 'Refuels solo in smaller, deeper doses.' },
+    { key: 'SN', label: 'Mind',     subtitle: 'How you take the world in',
+      left: 'Observant', leftDesc: 'Trusts facts, details, what\u2019s actually in front of you.',
+      right: 'Intuitive', rightDesc: 'Chases patterns, possibilities, what\u2019s next.' },
+    { key: 'TF', label: 'Nature',   subtitle: 'How you make the call',
+      left: 'Thinking', leftDesc: 'Leads with logic, facts, efficiency.',
+      right: 'Feeling', rightDesc: 'Leads with empathy, people, impact.' },
+    { key: 'JP', label: 'Tactics',  subtitle: 'How you run your day',
+      left: 'Judging', leftDesc: 'Plans, lists, decisions. Loves closure.',
+      right: 'Prospecting', rightDesc: 'Options open. Plays it by ear.' },
+    { key: 'AT', label: 'Identity', subtitle: 'How you handle pressure',
+      left: 'Assertive', leftDesc: 'Cool, confident, shakes things off.',
+      right: 'Turbulent', rightDesc: 'Self-aware, sensitive, always polishing.' }
+  ];
+
+  // Stack config: track centre sits at bottom:23px. Dots are 26px tall.
+  // Dot bottom = DOT_BASE + level * LEVEL_STEP so level 0 centres on the track.
+  const DOT_BASE = 10;   // level-0 dot sits on the track
+  const LEVEL_STEP = 30; // px gap between stacked levels
+  const TOP_PAD = 12;    // breathing room above the topmost dot
+
+  host.innerHTML = dims.map(d => {
+    const pts = withPcts.map(m => ({ name: m.name, pct: m.pcts[d.key], type: m.typeCode + '-' + m.identity })).sort((a,b) => a.pct - b.pct);
+    // Assign stack levels to avoid overlap (dots within ~5% of each other stack vertically)
+    const lastPctAtLevel = [];
+    pts.forEach(p => {
+      let placed = false;
+      for (let i = 0; i < lastPctAtLevel.length; i++) {
+        if (p.pct - lastPctAtLevel[i] >= 5) { lastPctAtLevel[i] = p.pct; p.level = i; placed = true; break; }
+      }
+      if (!placed) { p.level = lastPctAtLevel.length; lastPctAtLevel.push(p.pct); }
+    });
+    const maxLevel = lastPctAtLevel.length - 1;
+    // Row height: space for track at bottom + tallest stack + padding
+    const rowHeight = DOT_BASE + maxLevel * LEVEL_STEP + 26 + TOP_PAD;
+
+    const dotsHtml = pts.map(p => {
+      const bottomPx = DOT_BASE + p.level * LEVEL_STEP;
+      const sideLabel = p.pct < 50 ? d.left : d.right;
+      const sidePct = p.pct < 50 ? (100 - p.pct) : p.pct;
+      const tip = `${p.name} — ${p.type} · ${sideLabel} ${sidePct}%`;
+      return `<div class="spectrum-dot spectrum-dot-${d.key}" style="left:${p.pct}%;bottom:${bottomPx}px;" data-tip="${tip}">${initialsMap[p.name]}</div>`;
+    }).join('');
+
+    return `<div class="spectrum-row">
+      <div class="spectrum-row-label">${d.label}</div>
+      <div class="spectrum-row-subtitle">${d.subtitle}</div>
+      <div class="spectrum-track-wrap" style="height:${rowHeight}px;">
+        <div class="spectrum-track spectrum-track-${d.key}"><div class="spectrum-midline"></div></div>
+        ${dotsHtml}
+      </div>
+      <div class="spectrum-ends">
+        <div class="spectrum-end left">
+          <div class="spectrum-end-label">${d.left}</div>
+          <div class="spectrum-end-desc">${d.leftDesc}</div>
+        </div>
+        <div class="spectrum-end right">
+          <div class="spectrum-end-label">${d.right}</div>
+          <div class="spectrum-end-desc">${d.rightDesc}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Format pct for display: given internal slider value (0=E, 100=I), show the dominant side
+function fmtPct(val, letters) {
+  if (val === 50) return '50/50';
+  return val < 50 ? `${letters[0]} ${100 - val}%` : `${letters[1]} ${val}%`;
+}
+// Get strength (how far from 50): 50=borderline, 100=max
+function strength(val) { return Math.abs(val - 50) * 2; }
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  GRID.forEach((row, ri) => {
+    row.forEach((type, ci) => {
+      const cell = document.createElement('div');
+      const typeMembers = visibleMembersIndexed().map(m => ({ ...m, idx: m._idx })).filter(m => m.typeCode === type.code);
+      const hasMem = typeMembers.length > 0;
+      let cls = 'personality-cell';
+      if (hasMem) cls += ' has-members';
+      if (selectedType === type.code) cls += ' selected';
+      cell.className = cls;
+      cell.onclick = () => selectType(type.code);
+
+      const isTop = ri < 2, isLeft = ci < 2;
+      cell.style.background = isTop && isLeft ? '#fff8fc' : isTop ? '#f8fffe' : isLeft ? '#fafaff' : '#f6fff9';
+
+      cell.innerHTML = `
+        <div class="cell-type">${type.code}</div>
+        <div class="cell-name">${type.name}</div>
+        ${hasMem ? `<div class="cell-count">${typeMembers.length}</div>` : ''}
+        <div class="cell-members">
+          ${!hasMem ? '<div class="empty-plus">+</div>' : ''}
+          ${typeMembers.map(m => {
+            const initials = m.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+            const idSuffix = m.identity ? `-${m.identity}` : '';
+            const tooltip = m.pcts ? `<div class="pct-tooltip">
+              <div class="pct-tooltip-row"><span class="pct-tooltip-label">Energy</span><span class="pct-tooltip-strong">${fmtPct(m.pcts.EI, 'EI')}</span></div>
+              <div class="pct-tooltip-row"><span class="pct-tooltip-label">Mind</span><span class="pct-tooltip-strong">${fmtPct(m.pcts.SN, 'SN')}</span></div>
+              <div class="pct-tooltip-row"><span class="pct-tooltip-label">Nature</span><span class="pct-tooltip-strong">${fmtPct(m.pcts.TF, 'TF')}</span></div>
+              <div class="pct-tooltip-row"><span class="pct-tooltip-label">Tactics</span><span class="pct-tooltip-strong">${fmtPct(m.pcts.JP, 'JP')}</span></div>
+              <div class="pct-tooltip-row"><span class="pct-tooltip-label">Identity</span><span class="pct-tooltip-strong">${fmtPct(m.pcts.AT, 'AT')}</span></div>
+            </div>` : (m.identity ? `<div class="pct-tooltip"><div class="pct-tooltip-row"><span class="pct-tooltip-label">${m.typeCode}${idSuffix}</span></div></div>` : '');
+            const isSelected = selectedMember === m.idx;
+            return `<div class="member-chip${isSelected ? ' chip-selected' : ''}" onclick="event.stopPropagation();selectMember(${m.idx})">
+              <div class="member-avatar">${initials}</div>
+              ${m.name}
+              ${!isSelected ? tooltip : ''}
+              <span class="member-remove" onclick="event.stopPropagation();removeMember(${m.idx})">&times;</span>
+            </div>`;
+          }).join('')}
+        </div>`;
+      grid.appendChild(cell);
+    });
+  });
+}
+
+// ============ Per-member personalised detail ============
+function renderMemberDetail() {
+  const panel = document.getElementById('memberDetailPanel');
+  if (selectedMember === null || !members[selectedMember]) { panel.classList.remove('visible'); panel.innerHTML = ''; return; }
+
+  const m = members[selectedMember];
+  const d = TYPE_DATA[m.typeCode];
+  const t = ALL_TYPES.find(x => x.code === m.typeCode);
+  if (!d || !t) { panel.classList.remove('visible'); return; }
+
+  // Build percentage bars
+  const dims = [
+    { key: 'EI', label: 'Energy', letters: ['E', 'I'], names: ['Extravert', 'Introvert'] },
+    { key: 'SN', label: 'Mind', letters: ['S', 'N'], names: ['Sensing', 'Intuition'] },
+    { key: 'TF', label: 'Nature', letters: ['T', 'F'], names: ['Thinking', 'Feeling'] },
+    { key: 'JP', label: 'Tactics', letters: ['J', 'P'], names: ['Judging', 'Perceiving'] },
+    { key: 'AT', label: 'Identity', letters: ['A', 'T'], names: ['Assertive', 'Turbulent'] },
+  ];
+
+  let barsHtml = '';
+  let nuanceTags = '';
+  let approachTips = [];
+
+  if (m.pcts) {
+    barsHtml = `<div class="member-pct-bars"><h3>${m.name}'s Profile</h3>${dims.map(dim => {
+      const val = m.pcts[dim.key]; // 0=first letter, 100=second letter
+      const isBorderline = Math.abs(val - 50) < 10;
+      const isStrong = Math.abs(val - 50) > 30;
+      const dominant = val < 50 ? dim.letters[0] : dim.letters[1];
+      const dominantName = val < 50 ? dim.names[0] : dim.names[1];
+      const pctDisplay = val === 50 ? 50 : (val < 50 ? 100 - val : val);
+      const fillWidth = Math.abs(val - 50);
+
+      return `<div class="member-bar-row">
+        <div class="member-bar-dim">${dim.label}</div>
+        <div class="member-bar-letters">
+          <span style="color:${val <= 50 ? 'var(--mrq-blue)' : '#d1d5db'}">${dim.letters[0]}</span>
+          <span style="color:${val >= 50 ? 'var(--mrq-blue)' : '#d1d5db'}">${dim.letters[1]}</span>
+        </div>
+        <div class="member-bar-track">
+          <div class="member-bar-center"></div>
+          ${val < 50
+            ? `<div class="member-bar-fill-left${isBorderline ? ' member-bar-fill-borderline' : ''}" style="width:${fillWidth}%"></div>`
+            : `<div class="member-bar-fill-right${isBorderline ? ' member-bar-fill-borderline' : ''}" style="width:${fillWidth}%"></div>`
+          }
+        </div>
+        <div class="member-bar-result${isBorderline ? ' borderline' : ''}">${dominantName} ${pctDisplay}%</div>
+      </div>`;
+    }).join('')}</div>`;
+
+    // Generate nuance tags
+    dims.forEach(dim => {
+      const val = m.pcts[dim.key];
+      const isBorderline = Math.abs(val - 50) < 10;
+      const isStrong = Math.abs(val - 50) > 30;
+      const dominant = val < 50 ? dim.names[0] : dim.names[1];
+      if (isBorderline) nuanceTags += `<span class="nuance-tag borderline">Borderline ${dim.label} \u2014 flexes between ${dim.names[0]} and ${dim.names[1]}</span>`;
+      if (isStrong) nuanceTags += `<span class="nuance-tag strong">Strong ${dominant}</span>`;
+    });
+
+    // Generate personalised approach tips based on their specific percentages
+    const ei = m.pcts.EI, sn = m.pcts.SN, tf = m.pcts.TF, jp = m.pcts.JP;
+
+    // Energy
+    if (Math.abs(ei - 50) < 10) {
+      approachTips.push(`${m.name} is near the line on Introversion/Extraversion. They can go either way \u2014 some days they'll want to talk things through, other days they'll need space. Read the room and don't assume.`);
+    } else if (ei >= 75) {
+      approachTips.push(`${m.name} is a strong introvert. Give them time to think before expecting answers. Written messages and async communication will get their best thinking. Don't mistake their quiet for disengagement.`);
+    } else if (ei <= 25) {
+      approachTips.push(`${m.name} is a strong extravert. They process by talking and thrive on interaction. Pull them into discussions early \u2014 but also help them create focus time when they need to get heads-down work done.`);
+    }
+
+    // Mind
+    if (Math.abs(sn - 50) < 10) {
+      approachTips.push(`They sit right between Sensing and Intuition, which is actually a superpower \u2014 they can engage with both the detail and the big picture. Use them as a bridge when practical and visionary thinkers are talking past each other.`);
+    } else if (sn >= 75) {
+      approachTips.push(`Strong Intuitive \u2014 they think in possibilities and patterns. Lead with the "why" and the vision before getting into specifics. They'll zone out if you start with a spreadsheet.`);
+    } else if (sn <= 25) {
+      approachTips.push(`Strong Sensing type \u2014 they want concrete facts, real examples, and proven approaches. Abstract ideas without evidence will lose them. Show, don't tell.`);
+    }
+
+    // Nature
+    if (Math.abs(tf - 50) < 10) {
+      approachTips.push(`Near the middle on Thinking/Feeling, so they can engage with both logic and people impact. This makes them good at balanced decisions, but they might take longer to land on one.`);
+    } else if (tf >= 75) {
+      approachTips.push(`Strong Feeling type \u2014 they care deeply about how things affect people. When delivering tough news or making hard calls, acknowledge the human side first. They're not being "soft" \u2014 they're processing the full picture.`);
+    } else if (tf <= 25) {
+      approachTips.push(`Strong Thinking type \u2014 they respect logic and directness above all. Don't sugarcoat feedback or pad out conversations with pleasantries. Get to the point, bring data, and respect their time.`);
+    }
+
+    // Tactics
+    if (Math.abs(jp - 50) < 10) {
+      approachTips.push(`Flexible on Judging/Perceiving \u2014 they can plan when needed and adapt when things change. Just be clear about which mode you need them in for any given project.`);
+    } else if (jp >= 75) {
+      approachTips.push(`Strong Perceiving type \u2014 they thrive with flexibility and hate feeling boxed in. Give them room to explore, but be explicit about hard deadlines. "When you can" means "never" to a strong P type.`);
+    } else if (jp <= 25) {
+      approachTips.push(`Strong Judging type \u2014 they want a plan, a deadline, and a checklist. Ambiguity stresses them out. When assigning work, be specific about scope, timeline, and what "done" looks like.`);
+    }
+
+    // Identity (A/T)
+    const at = m.pcts.AT;
+    if (Math.abs(at - 50) < 10) {
+      approachTips.push(`Near the middle on Assertive/Turbulent \u2014 they can be confident and steady in some situations, and self-critical in others. They'll adapt to the moment.`);
+    } else if (at >= 75) {
+      approachTips.push(`Strong Turbulent type \u2014 ${m.name} is self-aware and driven to improve, but may overthink things or be too hard on themselves. Positive reinforcement matters. When giving feedback, lead with what's working before what needs to change. They already know their mistakes \u2014 they don't need them amplified.`);
+    } else if (at >= 50) {
+      approachTips.push(`Leans Turbulent \u2014 they're attentive to detail and driven to do better, but can second-guess themselves. Regular reassurance that they're on track goes a long way.`);
+    } else if (at <= 25) {
+      approachTips.push(`Strong Assertive type \u2014 ${m.name} is confident, emotionally even, and doesn't dwell on mistakes. Great under pressure, but may need a nudge to reflect on feedback or consider that something went wrong. They might underestimate risks that others can see clearly.`);
+    } else {
+      approachTips.push(`Leans Assertive \u2014 they're generally confident and steady. They handle pressure well but may sometimes brush past valid concerns. Check in on whether they're genuinely fine or just projecting calm.`);
+    }
+  } else if (m.identity) {
+    // Has identity but no percentages
+    if (m.identity === 'T') {
+      approachTips.push(`Turbulent identity \u2014 ${m.name} is likely self-aware, detail-driven, and motivated to improve. Lead with positives when giving feedback. They're probably already harder on themselves than you'd be.`);
+    } else {
+      approachTips.push(`Assertive identity \u2014 ${m.name} is likely confident and calm under pressure. They handle criticism well but may need a nudge to take feedback on board rather than brushing it off.`);
+    }
+  }
+
+  if (approachTips.length === 0) {
+    // Fallback for members without percentages or identity
+    approachTips.push(`Based on their ${m.typeCode} type: ${d.comms[0].toLowerCase()}.`);
+    approachTips.push(d.comms[1]);
+  }
+
+  panel.classList.add('visible');
+  panel.innerHTML = `
+    <div class="member-detail-header">
+      <div class="member-detail-name">
+        <h2>${m.name}</h2>
+        <span class="member-type-badge">${t.code}${m.identity ? '-' + m.identity : ''}</span>
+        <span class="member-type-label">${t.name}</span>
+      </div>
+      <button class="detail-close" onclick="selectedMember=null;render();">&times;</button>
+    </div>
+    <div class="member-detail-body">
+      <div class="member-detail-left">
+        ${barsHtml}
+        ${nuanceTags ? `<div class="member-nuance">${nuanceTags}</div>` : ''}
+        <div class="approach-box">
+          <h3>The cheat sheet for ${m.name}</h3>
+          ${approachTips.map(t => `<p class="approach-tip">${t}</p>`).join('')}
+        </div>
+      </div>
+      <div class="member-detail-right">
+        <div class="member-detail-section"><h3>How They Work</h3><p>${d.style}</p></div>
+        <div class="member-detail-section"><h3>How to Talk to Them</h3><ul>${d.comms.map(c => `<li>${c}</li>`).join('')}</ul></div>
+        <div class="member-detail-section"><h3>What They Actually Need</h3><p>${d.needs}</p></div>
+        <div class="member-detail-section"><h3>What Winds Them Up</h3><p>${d.stresses}</p></div>
+      </div>
+    </div>
+  `;
+  // Scroll to panel
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderDetail() {
+  const panel = document.getElementById('detailPanel');
+  if (!selectedType || !TYPE_DATA[selectedType]) { panel.classList.remove('visible'); panel.innerHTML = ''; return; }
+  const d = TYPE_DATA[selectedType];
+  const t = ALL_TYPES.find(x => x.code === selectedType);
+  const typeMembers = visibleMembers().filter(m => m.typeCode === selectedType);
+
+  // Build member profile bars
+  let profilesHtml = '';
+  const membersWithPcts = typeMembers.filter(m => m.pcts);
+  if (membersWithPcts.length > 0) {
+    profilesHtml = `<div class="member-profiles"><h3>The Breakdown</h3>${membersWithPcts.map(m => {
+      const dims = [
+        { key: 'EI', letters: 'EI', label: 'E/I' },
+        { key: 'SN', letters: 'SN', label: 'S/N' },
+        { key: 'TF', letters: 'TF', label: 'T/F' },
+        { key: 'JP', letters: 'JP', label: 'J/P' },
+      ];
+      return `<div class="member-profile">
+        <div class="member-profile-name">${m.name}</div>
+        <div class="profile-bars">${dims.map(dim => {
+          const val = m.pcts[dim.key];
+          const dominant = val < 50 ? dim.letters[0] : dim.letters[1];
+          const pctDisplay = val === 50 ? 50 : (val < 50 ? 100 - val : val);
+          const isBorderline = Math.abs(val - 50) < 10;
+          const barPct = val; // 0=left, 100=right
+          return `<div class="profile-bar-item">
+            <div class="profile-bar-labels">
+              <span class="${val <= 50 ? 'active-letter' : 'inactive-letter'}">${dim.letters[0]}</span>
+              <span class="${val >= 50 ? 'active-letter' : 'inactive-letter'}">${dim.letters[1]}</span>
+            </div>
+            <div class="profile-bar-track">
+              <div class="profile-bar-fill" style="width:${val < 50 ? (100 - val) : val}%;margin-left:${val < 50 ? 0 : 'auto'};margin-right:${val >= 50 ? 0 : 'auto'};${val < 50 ? '' : 'margin-left:auto;'}background:${isBorderline ? 'var(--mrq-yellow)' : 'var(--mrq-blue)'}"></div>
+            </div>
+            <div class="profile-bar-pct">${dominant} ${pctDisplay}%${isBorderline ? '<span class="borderline-note">close</span>' : ''}</div>
+          </div>`;
+        }).join('')}</div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  panel.classList.add('visible');
+  panel.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-title"><h2>${t.code}</h2><span>${t.name}${typeMembers.length > 0 ? ' \u2014 ' + typeMembers.map(m => m.name + (m.identity ? ' (' + m.identity + ')' : '')).join(', ') : ''}</span></div>
+      <button class="detail-close" onclick="selectedType=null;selectedMember=null;render();">&times;</button>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-section"><h3>How They Work</h3><p>${d.style}</p></div>
+      <div class="detail-section"><h3>How to Talk to Them</h3><ul>${d.comms.map(c => `<li>${c}</li>`).join('')}</ul></div>
+      <div class="detail-section"><h3>What They Actually Need</h3><p>${d.needs}</p></div>
+      <div class="detail-section"><h3>What Winds Them Up</h3><p>${d.stresses}</p></div>
+    </div>
+    ${profilesHtml}
+  `;
+}
+
+function renderDimensions() {
+  const dims = document.getElementById('dimensions');
+  const vm = visibleMembers();
+  const total = vm.length;
+  const count = (letter, pos) => vm.filter(m => m.typeCode[pos] === letter).length;
+
+  const pairs = [
+    { label: 'Energy',   left: 'E', right: 'I', leftName: 'Extravert',  rightName: 'Introvert',  pos: 0, key: 'EI' },
+    { label: 'Mind',     left: 'S', right: 'N', leftName: 'Sensing',    rightName: 'Intuition',  pos: 1, key: 'SN' },
+    { label: 'Nature',   left: 'T', right: 'F', leftName: 'Thinking',   rightName: 'Feeling',    pos: 2, key: 'TF' },
+    { label: 'Tactics',  left: 'J', right: 'P', leftName: 'Judging',    rightName: 'Perceiving', pos: 3, key: 'JP' },
+    { label: 'Identity', left: 'A', right: 'T', leftName: 'Assertive',  rightName: 'Turbulent',  pos: -1, key: 'AT' },
+  ];
+
+  dims.innerHTML = pairs.map(p => {
+    let lc, rc;
+    if (p.pos >= 0) {
+      lc = count(p.left, p.pos);
+      rc = count(p.right, p.pos);
+    } else {
+      // Identity — stored in member.identity
+      lc = vm.filter(m => m.identity === 'A').length;
+      rc = vm.filter(m => m.identity === 'T').length;
+    }
+    const pct = total > 0 ? Math.round((lc / total) * 100) : 50;
+
+    // Compute average pct from members with percentages
+    const withPcts = vm.filter(m => m.pcts);
+    let avgHtml = '';
+    if (withPcts.length > 0) {
+      // For EI: slider 0=E, 100=I. So avg gives us the team's lean
+      const avg = Math.round(withPcts.reduce((sum, m) => sum + m.pcts[p.key], 0) / withPcts.length);
+      const avgDisplay = fmtPct(avg, [p.left, p.right]);
+      avgHtml = `<div class="dim-avg">Avg strength: ${avgDisplay}</div>`;
+    }
+
+    return `<div class="dim-card" onclick="toggleDimInsight('${p.label}', ${lc}, ${rc}, ${total})">
+      <div class="dim-title">${p.label}</div>
+      <div class="dim-bar-container">
+        <div class="dim-label left">${p.left}</div>
+        <div class="dim-bar-track"><div class="dim-bar-fill" style="width: ${pct}%"></div></div>
+        <div class="dim-label right">${p.right}</div>
+      </div>
+      <div class="dim-counts"><span>${p.leftName}: ${lc}</span><span>${p.rightName}: ${rc}</span></div>
+      ${avgHtml}
+    </div>`;
+  }).join('');
+}
+
+let activeDim = null;
+function toggleDimInsight(dim, lc, rc, total) {
+  const panel = document.getElementById('dimInsight');
+  if (activeDim === dim || total === 0) { panel.classList.remove('visible'); activeDim = null; return; }
+  activeDim = dim;
+  const data = DIM_INSIGHTS[dim];
+  const leftPct = Math.round((lc / total) * 100);
+  const rightPct = 100 - leftPct;
+  let text = leftPct >= 65 ? data.heavy_left(leftPct) : rightPct >= 65 ? data.heavy_right(rightPct) : data.balanced();
+  panel.innerHTML = `<div class="insight-label">${dim} \u2014 What this means for the team</div><p>${text}</p>`;
+  panel.classList.add('visible');
+}
+
+function renderTeamInsights() {
+  const container = document.getElementById('teamInsights');
+  const vm = visibleMembers();
+  if (vm.length < 3) { container.innerHTML = ''; return; }
+  const total = vm.length;
+  const count = (letter, pos) => vm.filter(m => m.typeCode[pos] === letter).length;
+  const strengths = [], watches = [];
+  const uniqueTypes = new Set(vm.map(m => m.typeCode)).size;
+  if (uniqueTypes >= Math.min(total, 6)) strengths.push('Your team has strong personality diversity \u2014 you\'ll naturally bring different perspectives to problems. Lean into it.');
+  if (uniqueTypes <= Math.ceil(total / 3) && total > 3) watches.push('Your team clusters in a few personality types. You\'ll agree quickly but might have blind spots. Deliberately assign someone to play devil\'s advocate in key decisions.');
+
+  const iC = count('I', 0), eC = count('E', 0), sC = count('S', 1), nC = count('N', 1);
+  const tC = count('T', 2), fC = count('F', 2), jC = count('J', 3), pC = count('P', 3);
+
+  if (tC > 0 && fC > 0) strengths.push('You have both Thinking and Feeling types \u2014 decisions can be both analytically sound and people-aware.');
+  if (jC > 0 && pC > 0) strengths.push('Mix of Judging and Perceiving means you can plan and adapt.');
+  if (fC === 0 && total > 2) watches.push('No Feeling types. Decisions will be logical but you might miss how changes land emotionally. Pause to ask "how will people feel about this?"');
+  if (tC === 0 && total > 2) watches.push('No Thinking types. Great harmony, but might struggle with tough calls. Assign someone to be the "logic check."');
+  if (iC === 0 && total > 2) watches.push('All extraverts \u2014 high energy but deep focused work might suffer. Build in protected focus time.');
+  if (eC === 0 && total > 2) watches.push('All introverts \u2014 great deep work but might under-communicate. Set up regular check-ins.');
+
+  // Identity insights
+  const aC = vm.filter(m => m.identity === 'A').length;
+  const trbC = vm.filter(m => m.identity === 'T').length;
+  if (aC > 0 && trbC > 0) strengths.push('You have both Assertive and Turbulent types \u2014 a balance of confidence and self-awareness. Assertive members steady the ship under pressure; Turbulent members catch risks and push for improvement.');
+  if (trbC === 0 && aC > 2) watches.push('All Assertive types \u2014 confident and calm, but you may collectively underestimate risks or dismiss concerns too quickly. Build in deliberate risk reviews.');
+  if (aC === 0 && trbC > 2) watches.push('All Turbulent types \u2014 thorough and self-improving, but you may collectively overthink or struggle with confidence on decisions. Celebrate wins and set "good enough" thresholds.');
+
+  // Check for borderline members
+  const borderlineMembers = vm.filter(m => m.pcts && Object.values(m.pcts).some(v => Math.abs(v - 50) < 10));
+  if (borderlineMembers.length > 0) {
+    watches.push(`${borderlineMembers.map(m => m.name).join(', ')} ${borderlineMembers.length === 1 ? 'has' : 'have'} borderline scores on some dimensions \u2014 they may flex between types depending on context. Don't put them in a rigid box.`);
+  }
+
+  if (strengths.length === 0 && watches.length === 0) { container.innerHTML = ''; return; }
+  container.innerHTML =
+    strengths.map(s => `<div class="insight-card strength"><h4>What's Working</h4><p>${s}</p></div>`).join('') +
+    watches.map(w => `<div class="insight-card watch"><h4>Heads Up</h4><p>${w}</p></div>`).join('');
+}
+
+// ============ The Read-Out ============
+function renderReadOut() {
+  const host = document.getElementById('readoutContent');
+  const empty = document.getElementById('readoutEmpty');
+  if (!host) return;
+  const vm = visibleMembers();
+  if (vm.length < 2) {
+    host.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  const total = vm.length;
+  const withPcts = vm.filter(m => m.pcts);
+  const count = (letter, pos) => vm.filter(m => m.typeCode[pos] === letter).length;
+
+  // Quadrants: rows = E/I × S/N combos effectively, but 16p uses Role groupings
+  // Analysts: NT, Diplomats: NF, Sentinels: SJ, Explorers: SP
+  const quadCount = (fn) => vm.filter(fn).length;
+  const analysts = quadCount(m => m.typeCode[1]==='N' && m.typeCode[2]==='T');
+  const diplomats = quadCount(m => m.typeCode[1]==='N' && m.typeCode[2]==='F');
+  const sentinels = quadCount(m => m.typeCode[1]==='S' && m.typeCode[3]==='J');
+  const explorers = quadCount(m => m.typeCode[1]==='S' && m.typeCode[3]==='P');
+
+  // Dominant type
+  const typeCounts = {};
+  vm.forEach(m => { typeCounts[m.typeCode] = (typeCounts[m.typeCode]||0) + 1; });
+  const dominantType = Object.entries(typeCounts).sort((a,b) => b[1]-a[1])[0];
+  const typeName = TYPE_NAMES[dominantType[0]] || dominantType[0];
+
+  // Dimension averages (centre of gravity)
+  const dims = [
+    { key: 'EI', label: 'Energy',   left: 'Extraverted', right: 'Introverted' },
+    { key: 'SN', label: 'Mind',     left: 'Observant',   right: 'Intuitive' },
+    { key: 'TF', label: 'Nature',   left: 'Thinking',    right: 'Feeling' },
+    { key: 'JP', label: 'Tactics',  left: 'Judging',     right: 'Prospecting' },
+    { key: 'AT', label: 'Identity', left: 'Assertive',   right: 'Turbulent' }
+  ];
+  const avgs = {};
+  if (withPcts.length > 0) {
+    dims.forEach(d => { avgs[d.key] = Math.round(withPcts.reduce((s,m) => s + m.pcts[d.key], 0) / withPcts.length); });
+  }
+
+  // Farthest apart on each dimension
+  const gaps = [];
+  if (withPcts.length >= 2) {
+    dims.forEach(d => {
+      const sorted = [...withPcts].sort((a,b) => a.pcts[d.key] - b.pcts[d.key]);
+      const lo = sorted[0], hi = sorted[sorted.length-1];
+      const gap = hi.pcts[d.key] - lo.pcts[d.key];
+      if (gap >= 30) {
+        const loSide = lo.pcts[d.key] < 50 ? d.left : d.right;
+        const loPct = lo.pcts[d.key] < 50 ? 100 - lo.pcts[d.key] : lo.pcts[d.key];
+        const hiSide = hi.pcts[d.key] < 50 ? d.left : d.right;
+        const hiPct = hi.pcts[d.key] < 50 ? 100 - hi.pcts[d.key] : hi.pcts[d.key];
+        gaps.push({ label: d.label, lo: lo.name, loSide, loPct, hi: hi.name, hiSide, hiPct, gap });
+      }
+    });
+    gaps.sort((a,b) => b.gap - a.gap);
+  }
+
+  // Observations — pattern-based, team-specific
+  const obs = []; // { tone: 'good'|'watch'|'neutral', text }
+  const iC = count('I',0), eC = count('E',0), tC = count('T',2), fC = count('F',2);
+  const jC = count('J',3), pC = count('P',3), nC = count('N',1), sC = count('S',1);
+  const aC = vm.filter(m=>m.identity==='A').length;
+  const trbC = vm.filter(m=>m.identity==='T').length;
+
+  // Dominant cluster
+  if (dominantType[1] >= 3) {
+    obs.push({ tone: 'neutral', text: `<strong>${dominantType[1]} of you are ${dominantType[0]} (${typeName}).</strong> That's your team's centre of gravity — expect quick alignment there, but watch for groupthink on things that play to its blind spots.` });
+  }
+  // Quadrant imbalances
+  if (diplomats >= total * 0.6) obs.push({ tone: 'good', text: `Heavy on Diplomats (${diplomats} of ${total}). Strong on empathy, vision and team cohesion.` });
+  if (analysts === 0 && total > 4) obs.push({ tone: 'watch', text: `Zero Analysts. Nobody's naturally wired to stress-test ideas with cold logic. Build in a "devil's advocate" moment before big calls.` });
+  if (sentinels === 0 && total > 4) obs.push({ tone: 'watch', text: `No Sentinels. The team is long on vision but may be short on practical execution rigour. Consider who's owning the "boring but critical" details.` });
+  if (explorers === 0 && total > 4) obs.push({ tone: 'watch', text: `No Explorers. Fewer spontaneous, adapt-on-the-fly voices — team may default to planning over experimenting.` });
+
+  // Dimension lopsidedness
+  if (nC >= total * 0.8) obs.push({ tone: 'watch', text: `Mostly Intuitive (${nC}/${total}). Great at big-picture, but someone needs to keep an eye on the concrete details.` });
+  if (fC >= total * 0.8 && tC > 0) obs.push({ tone: 'neutral', text: `Leans strongly toward Feeling (${fC}/${total}). Decisions will be people-aware — just make sure the tough commercial calls still get made.` });
+  if (fC === total) obs.push({ tone: 'watch', text: `No Thinking types. Decisions will be warm and humane but may struggle when they need to be cold and commercial.` });
+  if (eC >= total * 0.7) obs.push({ tone: 'neutral', text: `Mostly Extraverts (${eC}/${total}). High-energy meetings, lots of talking it through. Make room for the quieter voices.` });
+  if (iC >= total * 0.7) obs.push({ tone: 'neutral', text: `Mostly Introverts (${iC}/${total}). Deep thinkers — protect focus time, and don't mistake quiet for disagreement.` });
+  if (jC > 0 && pC > 0 && Math.abs(jC - pC) <= 2) obs.push({ tone: 'good', text: `Healthy Judging/Prospecting mix. You've got people who'll plan and people who'll adapt — put both in the room.` });
+  if (trbC >= total * 0.7) obs.push({ tone: 'watch', text: `Most of you are Turbulent. You'll push for excellence, but collectively you may also overthink and under-celebrate. Set "good enough" thresholds and mark wins deliberately.` });
+  if (aC >= total * 0.7) obs.push({ tone: 'watch', text: `Most of you are Assertive. Confidence is a strength, but collectively you may dismiss legitimate concerns too fast. Build in a proper risk check.` });
+
+  if (obs.length === 0) obs.push({ tone: 'good', text: `Well-balanced team — no extreme skews jumping out of the numbers.` });
+
+  // Extreme individuals
+  const extremes = [];
+  if (withPcts.length >= 3) {
+    dims.forEach(d => {
+      const sorted = [...withPcts].sort((a,b) => Math.abs(b.pcts[d.key]-50) - Math.abs(a.pcts[d.key]-50));
+      const strongest = sorted[0];
+      if (Math.abs(strongest.pcts[d.key] - 50) >= 35) {
+        const side = strongest.pcts[d.key] < 50 ? d.left : d.right;
+        const pct = strongest.pcts[d.key] < 50 ? 100 - strongest.pcts[d.key] : strongest.pcts[d.key];
+        extremes.push({ label: d.label, name: strongest.name, side, pct });
+      }
+    });
+  }
+
+  host.innerHTML = `
+    <div class="readout-card">
+      <div class="readout-title">Shape of the room</div>
+      <div class="readout-headline">${total} ${total !== 1 ? 'people' : 'person'}, ${Object.keys(typeCounts).length} ${Object.keys(typeCounts).length !== 1 ? 'types' : 'type'}</div>
+      <div class="readout-sub" style="margin-bottom:14px;">Centre of gravity: <strong style="color:#0B2595;">${dominantType[0]} (${typeName})</strong> &mdash; ${dominantType[1]} of ${total}.</div>
+      <div class="readout-quadrants">
+        <div class="readout-quadrant analysts"><span class="readout-quadrant-count">${analysts}</span>Analysts</div>
+        <div class="readout-quadrant diplomats"><span class="readout-quadrant-count">${diplomats}</span>Diplomats</div>
+        <div class="readout-quadrant sentinels"><span class="readout-quadrant-count">${sentinels}</span>Sentinels</div>
+        <div class="readout-quadrant explorers"><span class="readout-quadrant-count">${explorers}</span>Explorers</div>
+      </div>
+    </div>
+
+    <div class="readout-card">
+      <div class="readout-title">Team centre of gravity</div>
+      <div class="readout-sub" style="margin-bottom:10px;">Where the team's average sits on each dimension.</div>
+      ${dims.map(d => {
+        if (avgs[d.key] === undefined) return '';
+        const side = avgs[d.key] < 50 ? d.left : d.right;
+        const pct = avgs[d.key] < 50 ? 100 - avgs[d.key] : avgs[d.key];
+        return `<div class="readout-stat-row"><span>${d.label}</span><span>${side} ${pct}%</span></div>`;
+      }).join('')}
+    </div>
+
+    ${gaps.length > 0 ? `
+    <div class="readout-card full">
+      <div class="readout-title">Where you're furthest apart</div>
+      <div class="readout-sub" style="margin-bottom:10px;">The biggest internal gulfs. Expect friction here &mdash; and useful perspective.</div>
+      ${gaps.slice(0, 4).map(g => `
+        <div class="readout-pair">
+          <div class="readout-pair-label">${g.label}</div>
+          <div class="readout-pair-ends">
+            <div class="readout-pair-person">${g.lo}<span class="pct">${g.loSide} ${g.loPct}%</span></div>
+            <div class="readout-pair-person" style="text-align:right;">${g.hi}<span class="pct">${g.hiSide} ${g.hiPct}%</span></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    ` : ''}
+
+    ${extremes.length > 0 ? `
+    <div class="readout-card full">
+      <div class="readout-title">The outliers</div>
+      <div class="readout-sub" style="margin-bottom:10px;">People sitting at the far end of a scale. Their perspective will be distinctively theirs.</div>
+      <ul class="readout-list">
+        ${extremes.map(e => `<li><span><strong>${e.name}</strong> on ${e.label.toLowerCase()} &mdash; ${e.side} ${e.pct}%.</span></li>`).join('')}
+      </ul>
+    </div>
+    ` : ''}
+
+    <div class="readout-card full">
+      <div class="readout-title">What this team is made of</div>
+      <ul class="readout-list">
+        ${obs.map(o => `<li class="${o.tone}"><span>${o.text}</span></li>`).join('')}
+      </ul>
+    </div>
+  `;
+}
+
+// ============ Situations ============
+const SITUATIONS = [
+  {
+    id: 'brainstorm',
+    icon: '\ud83d\udca1',
+    name: 'Brainstorms',
+    blurb: 'Generating new ideas in the room',
+    // weights: positive = prefers right side letter. Scale -1 to 1.
+    weights: { EI: -0.8, SN: 0.9, TF: 0.2, JP: 0.6, AT: 0 },
+    driverNote: 'Extraverts + Intuitives + Prospectors drive here. They think out loud and chase tangents.',
+    easeNote: 'Introverts and Judgers may need prep time or a written round first.',
+    move: 'Send the prompt 24 hours ahead so quieter, more structured brains arrive with ideas already half-formed. Do a silent-written round before the group riff so the loudest voices don\u2019t frame the space.'
+  },
+  {
+    id: 'decision',
+    icon: '\u2696\ufe0f',
+    name: 'Tough decisions',
+    blurb: 'Making the call when it matters',
+    weights: { EI: 0, SN: 0, TF: -0.7, JP: -0.8, AT: -0.3 },
+    driverNote: 'Thinkers + Judgers + Assertive types will want to commit and move on.',
+    easeNote: 'Feelers and Prospectors want to weigh more angles. Ignore them and you\u2019ll make fast decisions that unravel later.',
+    move: 'Separate the <strong>gather</strong> phase (everyone in, Feelers and Prospectors lead) from the <strong>decide</strong> phase (short, time-boxed, Judgers and Thinkers drive). Announce which phase you\u2019re in.'
+  },
+  {
+    id: 'feedback',
+    icon: '\ud83d\udde3\ufe0f',
+    name: 'Tough feedback',
+    blurb: 'Giving it, receiving it',
+    weights: { EI: 0, SN: 0, TF: -0.4, JP: 0, AT: 0.5 },
+    driverNote: 'Thinkers find direct feedback easier to give cleanly; Turbulent types often receive it harder (and sit with it longer).',
+    easeNote: 'Feelers will want context and care first. Assertive types may shrug off signal they should hear.',
+    move: 'Lead with the specific behaviour and its impact, not the personality trait behind it. For Turbulent receivers, follow up 24 hours later &mdash; they\u2019ll have chewed on it.'
+  },
+  {
+    id: 'planning',
+    icon: '\ud83d\uddd3\ufe0f',
+    name: 'Quarter planning',
+    blurb: 'Setting direction and commitments',
+    weights: { EI: 0, SN: 0.5, TF: 0, JP: -0.6, AT: 0 },
+    driverNote: 'Intuitives frame the vision; Judgers break it into a plan and timelines.',
+    easeNote: 'Observants want concrete milestones; Prospectors may resist over-commitment too early.',
+    move: 'Use a two-pass structure: first pass is vision and shape (Intuitives lead), second pass is commitments and dates (Judgers lead). Leave deliberate slack for Prospectors to flex into.'
+  },
+  {
+    id: 'retro',
+    icon: '\ud83d\udd0d',
+    name: 'Retros',
+    blurb: 'Looking back honestly',
+    weights: { EI: 0.3, SN: 0.4, TF: 0.5, JP: 0.2, AT: 0.3 },
+    driverNote: 'Feelers surface what it felt like; Intuitives spot the patterns; Turbulent types notice what went wrong before anyone else.',
+    easeNote: 'Assertive and Thinking types may skip emotional signal. Extraverts may drown out quieter observations.',
+    move: 'Start silent and written (everyone jots down one win and one drag). Then share in pairs before group. You get honest signal from the whole team, not just the room-fillers.'
+  },
+  {
+    id: 'change',
+    icon: '\ud83c\udf00',
+    name: 'Leading change',
+    blurb: 'New ways of working',
+    weights: { EI: 0, SN: 0.6, TF: 0, JP: 0.4, AT: -0.3 },
+    driverNote: 'Intuitives and Prospectors adapt quickly &mdash; they\u2019re energised by the new thing.',
+    easeNote: 'Observants and Judgers need the new system laid out concretely before they\u2019ll trust it. Turbulent types will feel the disruption first.',
+    move: 'Over-communicate the <strong>why</strong> (for Intuitives), the <strong>what exactly changes</strong> (for Observants and Judgers), and the <strong>what stays the same</strong> (for Turbulent types). Don\u2019t skip any of the three.'
+  },
+  {
+    id: 'deadline',
+    icon: '\u23f1\ufe0f',
+    name: 'Under deadline',
+    blurb: 'Heads down, go time',
+    weights: { EI: 0.3, SN: -0.3, TF: -0.3, JP: -0.6, AT: -0.5 },
+    driverNote: 'Judgers and Assertive types hold steady under pressure &mdash; they focus and execute.',
+    easeNote: 'Turbulent types feel the stress hardest; Prospectors may struggle with tight scope. Check in on them directly.',
+    move: 'Cut scope ruthlessly and re-state it in writing. Under pressure Turbulent brains loop on worst cases &mdash; a clear, bounded scope is the kindest thing you can give them.'
+  },
+  {
+    id: 'onboard',
+    icon: '\ud83d\udc4b',
+    name: 'Onboarding',
+    blurb: 'Welcoming a new starter',
+    weights: { EI: 0, SN: -0.4, TF: 0.4, JP: -0.3, AT: 0 },
+    driverNote: 'Feelers naturally make people feel at home; Judgers set up the structure and logistics.',
+    easeNote: 'Nobody\u2019s naturally bad at this, but make sure both the practical setup AND the human welcome happen.',
+    move: 'Assign two buddies deliberately: one Judger-type for "here\u2019s how we actually do things" and one Feeler-type for "here\u2019s what this team is like to be in."'
+  }
+];
+
+let selectedSituation = null;
+function renderSituations() {
+  const grid = document.getElementById('situationsGrid');
+  const detail = document.getElementById('situationDetail');
+  const empty = document.getElementById('situationsEmpty');
+  if (!grid) return;
+  const withPcts = visibleMembers().filter(m => m.pcts);
+  if (withPcts.length < 2) {
+    grid.innerHTML = '';
+    if (detail) detail.classList.remove('visible');
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  grid.innerHTML = SITUATIONS.map(s => `
+    <div class="situation-card ${selectedSituation === s.id ? 'active' : ''}" onclick="selectSituation('${s.id}')">
+      <span class="situation-icon">${s.icon}</span>
+      <div class="situation-name">${s.name}</div>
+      <div class="situation-blurb">${s.blurb}</div>
+    </div>
+  `).join('');
+
+  if (selectedSituation) {
+    const s = SITUATIONS.find(x => x.id === selectedSituation);
+    if (s) renderSituationDetail(s);
+  }
+}
+
+function selectSituation(id) {
+  selectedSituation = id;
+  renderSituations();
+}
+
+function renderSituationDetail(s) {
+  const detail = document.getElementById('situationDetail');
+  const withPcts = visibleMembers().filter(m => m.pcts);
+
+  // Compute fit score per member: sum of weight * normalized dim value
+  // Dim value: (pct - 50) / 50, giving -1 to +1. Positive means "right side" (I/N/F/P/T).
+  const scored = withPcts.map(m => {
+    let score = 0;
+    Object.entries(s.weights).forEach(([dim, w]) => {
+      if (w === 0) return;
+      const v = (m.pcts[dim] - 50) / 50;
+      score += w * v;
+    });
+    return { name: m.name, type: m.typeCode + '-' + m.identity, score };
+  }).sort((a,b) => b.score - a.score);
+
+  const topN = Math.min(3, Math.ceil(scored.length / 3));
+  const drivers = scored.slice(0, topN).filter(x => x.score > 0);
+  const eases = scored.slice(-topN).filter(x => x.score < 0).reverse();
+
+  detail.innerHTML = `
+    <h2>${s.icon} ${s.name}</h2>
+    <div class="tagline">${s.blurb}</div>
+
+    <div class="situation-section">
+      <h3>Who naturally drives</h3>
+      <div class="situation-people">
+        ${drivers.length > 0 ? drivers.map(d => `<span class="situation-person driver">${d.name} <span class="type">${d.type}</span></span>`).join('') : '<span style="font-size:12px;color:#9ca3af;">Nobody particularly strongly &mdash; the team\u2019s close to average here.</span>'}
+      </div>
+      <div class="situation-sub" style="font-size:12px;color:#6b7280;margin-top:8px;line-height:1.5;">${s.driverNote}</div>
+    </div>
+
+    <div class="situation-section">
+      <h3>Who needs a run-up</h3>
+      <div class="situation-people">
+        ${eases.length > 0 ? eases.map(d => `<span class="situation-person ease">${d.name} <span class="type">${d.type}</span></span>`).join('') : '<span style="font-size:12px;color:#9ca3af;">Nobody\u2019s markedly off &mdash; no special accommodations needed.</span>'}
+      </div>
+      <div class="situation-sub" style="font-size:12px;color:#6b7280;margin-top:8px;line-height:1.5;">${s.easeNote}</div>
+    </div>
+
+    <div class="situation-section">
+      <h3>Your move as manager</h3>
+      <div class="situation-move">${s.move}</div>
+    </div>
+  `;
+  detail.classList.add('visible');
+}
+
+function renderTotal() {
+  const vm = visibleMembers();
+  const total = vm.length;
+  const anyFilter = !!(activeFilters.team || activeFilters.tribe || activeFilters.squad);
+  document.getElementById('totalBadge').innerHTML = total > 0
+    ? `<span>${total} ${total !== 1 ? 'people' : 'person'}${anyFilter ? ' in this slice' : ' on the map'}</span>`
+    : `<span style="background:#d1d5db">Nobody here yet — ${anyFilter ? 'try a different slice or clear filters' : 'get adding'}</span>`;
+}
+
+// ============ Compare ============
+function populateCompareSelects() {
+  const vi = visibleMembersIndexed();
+  ['compareA', 'compareB'].forEach(id => {
+    const s = document.getElementById(id); const prev = s.value;
+    s.innerHTML = '<option value="">Pick someone...</option>';
+    vi.forEach(m => { const o = document.createElement('option'); o.value = m._idx; o.textContent = `${m.name} (${m.typeCode}${m.identity ? '-' + m.identity : ''})`; s.appendChild(o); });
+    if (prev && vi.some(m => String(m._idx) === prev)) s.value = prev;
+  });
+  renderCompare();
+}
+
+function renderCompare() {
+  const panel = document.getElementById('comparePanel');
+  const aIdx = document.getElementById('compareA').value, bIdx = document.getElementById('compareB').value;
+  if (aIdx === '' || bIdx === '' || aIdx === bIdx) {
+    panel.innerHTML = `<p style="text-align:center;color:#9ca3af;font-size:13px;font-weight:500;padding:20px 0;">${visibleMembers().length < 2 ? 'Need at least two people in this slice first.' : 'Pick two different people above and let\'s see what happens.'}</p>`;
+    return;
+  }
+  const a = members[aIdx], b = members[bIdx];
+  const dA = TYPE_DATA[a.typeCode], dB = TYPE_DATA[b.typeCode];
+  const tA = ALL_TYPES.find(x => x.code === a.typeCode), tB = ALL_TYPES.find(x => x.code === b.typeCode);
+  const insights = getCompareInsights(a, b);
+
+  // Build dimension comparison bars if both have pcts
+  let dimBarsHtml = '';
+  if (a.pcts && b.pcts) {
+    const dims = [
+      { key: 'EI', label: 'Energy', letters: 'EI' },
+      { key: 'SN', label: 'Mind', letters: 'SN' },
+      { key: 'TF', label: 'Nature', letters: 'TF' },
+      { key: 'JP', label: 'Tactics', letters: 'JP' },
+      { key: 'AT', label: 'Identity', letters: 'AT' },
+    ];
+    dimBarsHtml = `<div class="compare-dims">
+      <h3>Side by Side</h3>
+      <div class="compare-legend">
+        <div class="compare-legend-item"><div class="compare-legend-dot" style="background:var(--mrq-blue)"></div>${a.name}</div>
+        <div class="compare-legend-item"><div class="compare-legend-dot" style="background:var(--mrq-pink)"></div>${b.name}</div>
+      </div>
+      ${dims.map(d => {
+        const vA = a.pcts[d.key], vB = b.pcts[d.key];
+        return `<div class="compare-dim-row">
+          <div class="compare-dim-label">${d.label}</div>
+          <div class="compare-dim-val a">${fmtPct(vA, [d.letters[0], d.letters[1]])}</div>
+          <div class="compare-dim-bars">
+            <div class="compare-dim-bar"><div class="compare-dim-fill-a" style="width:${vA < 50 ? 100-vA : vA}%;margin-left:${vA < 50 ? 0 : 'auto'}"></div></div>
+            <div class="compare-dim-bar"><div class="compare-dim-fill-b" style="width:${vB < 50 ? 100-vB : vB}%;margin-left:${vB < 50 ? 0 : 'auto'}"></div></div>
+          </div>
+          <div class="compare-dim-val b">${fmtPct(vB, [d.letters[0], d.letters[1]])}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  panel.innerHTML = `
+    <div class="compare-header">
+      <h2>${a.name} &amp; ${b.name}</h2>
+      <span style="font-size:12px;font-weight:600;color:#9ca3af;">${insights.sharedCount}/4 traits in common</span>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-col"><h3>${a.name}</h3><div class="compare-sub">${tA.code}${a.identity ? '-' + a.identity : ''} \u2014 ${tA.name}</div><p class="insight-text">${dA.style}</p></div>
+      <div class="compare-col"><h3>${b.name}</h3><div class="compare-sub">${tB.code}${b.identity ? '-' + b.identity : ''} \u2014 ${tB.name}</div><p class="insight-text">${dB.style}</p></div>
+    </div>
+    ${dimBarsHtml}
+    ${insights.shared.length > 0 ? `<div class="shared-section"><h3>Where You'll Click</h3>${insights.shared.map(s => `<p class="insight-text" style="margin-bottom:8px;">${s}</p>`).join('')}</div>` : ''}
+    ${insights.friction.length > 0 ? `<div class="friction-section"><h3>Where It Might Get Spicy</h3>${insights.friction.map(f => `<p class="insight-text" style="margin-bottom:8px;">${f}</p>`).join('')}</div>` : ''}
+    ${insights.tips.length > 0 ? `<div class="tip-box"><strong>How to make it work:</strong><br>${insights.tips.join('<br><br>')}</div>` : ''}
+  `;
+}
+
+function getCompareInsights(a, b) {
+  const codeA = a.typeCode, codeB = b.typeCode;
+  const shared = [], friction = [], tips = [];
+  let sharedCount = 0;
+  for (let i = 0; i < 4; i++) { if (codeA[i] === codeB[i]) sharedCount++; }
+
+  // Check if both have pcts for nuanced insights
+  const hasPcts = a.pcts && b.pcts;
+
+  if (codeA[0] !== codeB[0]) {
+    let extra = '';
+    if (hasPcts) {
+      const diff = Math.abs(a.pcts.EI - b.pcts.EI);
+      extra = diff > 50 ? ' This is a strong difference between you two \u2014 it\'ll be noticeable day-to-day.' : diff < 25 ? ' That said, neither of you is extreme on this, so it should be manageable.' : '';
+    }
+    friction.push('One recharges alone, the other recharges with people.' + extra);
+    tips.push('Agree on communication norms \u2014 when to chat live vs. async.');
+  } else if (codeA[0] === 'I') {
+    shared.push('Both introverts \u2014 you\'ll respect each other\'s need for space. Just make sure you communicate enough.');
+  } else {
+    shared.push('Both extraverts \u2014 great energy together. Watch you don\'t spend all your time talking and not enough doing.');
+  }
+
+  if (codeA[1] !== codeB[1]) {
+    let extra = '';
+    if (hasPcts) {
+      const diff = Math.abs(a.pcts.SN - b.pcts.SN);
+      extra = diff > 50 ? ' This is a big gap \u2014 you\'ll need to consciously bridge between detail and big-picture.' : '';
+    }
+    friction.push('One focuses on concrete details, the other on possibilities.' + extra);
+    tips.push('Align on which mode you\'re in: brainstorming or executing.');
+  } else if (codeA[1] === 'S') {
+    shared.push('Both Sensing types \u2014 strong execution pair. Occasionally push each other to zoom out.');
+  } else {
+    shared.push('Both Intuitive types \u2014 great brainstorming partners. Agree on when to stop exploring and start building.');
+  }
+
+  if (codeA[2] !== codeB[2]) {
+    let extra = '';
+    if (hasPcts) {
+      const diff = Math.abs(a.pcts.TF - b.pcts.TF);
+      extra = diff > 50 ? ' This is a significant difference \u2014 be especially mindful during decision-making.' : '';
+    }
+    friction.push('One leads with logic, the other with values and people impact.' + extra);
+    tips.push('Explicitly cover both angles: "What does the data say?" AND "How will people feel?"');
+  } else if (codeA[2] === 'T') {
+    shared.push('Both Thinking types \u2014 sharp, logical decisions together. Run an empathy check before announcing them.');
+  } else {
+    shared.push('Both Feeling types \u2014 strong rapport. Back each other up when tough calls are needed.');
+  }
+
+  if (codeA[3] !== codeB[3]) {
+    let extra = '';
+    if (hasPcts) {
+      const diff = Math.abs(a.pcts.JP - b.pcts.JP);
+      extra = diff > 50 ? ' This gap is significant \u2014 you\'ll need clear agreements on what\'s fixed vs. flexible.' : '';
+    }
+    friction.push('One wants a plan, the other wants options.' + extra);
+    tips.push('Set hard deadlines on what matters, and leave flex room on what doesn\'t.');
+  } else if (codeA[3] === 'J') {
+    shared.push('Both Judging types \u2014 organised and reliable together. Watch for over-planning.');
+  } else {
+    shared.push('Both Perceiving types \u2014 flexible and creative. Agree on "decision by" dates.');
+  }
+
+  // Identity (A/T)
+  const idA = a.identity, idB = b.identity;
+  if (idA && idB) {
+    if (idA !== idB) {
+      friction.push('One is Assertive (confident, steady under pressure), the other is Turbulent (self-aware, driven to improve). The Assertive one might seem dismissive of concerns; the Turbulent one might seem like they\'re overthinking.');
+      tips.push('The Assertive person should actively listen when the Turbulent person raises concerns \u2014 they\'re often catching real issues. The Turbulent person should trust that the Assertive person\'s calm isn\'t carelessness. Together you balance confidence with vigilance.');
+    } else if (idA === 'A') {
+      shared.push('Both Assertive \u2014 you\'ll be calm and confident together. Just make sure you\'re not both brushing off problems. Somebody needs to play devil\'s advocate.');
+    } else {
+      shared.push('Both Turbulent \u2014 you\'ll be thorough and push each other to improve. Watch that you don\'t spiral into overthinking together. Agree on "good enough" thresholds.');
+    }
+  }
+
+  return { shared, friction, tips, sharedCount };
+}
+
+// TYPE_DATA
+const TYPE_DATA = {
+  INTJ: { style: 'Strategic and independent. INTJs think in systems and long-term plans. They value competence and efficiency above all.', comms: ['Be direct and logical \u2014 skip small talk', 'Come with a clear rationale; they respect well-reasoned arguments', 'Give them space to work independently', 'Don\'t take bluntness personally \u2014 they\'re focused on the idea, not the person'], needs: 'Autonomy, intellectual challenge, and a clear vision.', stresses: 'Inefficiency, constant social interaction, decisions made without logic.' },
+  INTP: { style: 'Analytical and curious. INTPs love pulling apart problems. They think deeply before speaking.', comms: ['Give them time to process \u2014 don\'t expect instant answers', 'Ask for their analysis; they see things others miss', 'Be precise \u2014 vague requests frustrate them', 'Written communication often works better than impromptu chats'], needs: 'Time to think, interesting problems, freedom to explore.', stresses: 'Strict routines, emotional decision-making, being put on the spot.' },
+  ENTJ: { style: 'Decisive and driven. ENTJs naturally take charge and push for results. Direct communicators who value action.', comms: ['Be organised and efficient \u2014 have your points ready', 'Focus on outcomes and results, not process details', 'Challenge them respectfully; they enjoy sparring', 'Say what you mean \u2014 don\'t beat around the bush'], needs: 'Clear goals, competent teammates, ability to lead.', stresses: 'Indecisiveness, lack of progress, people not pulling their weight.' },
+  ENTP: { style: 'Inventive and energetic. ENTPs are idea machines who love brainstorming and debating.', comms: ['Engage with their ideas enthusiastically', 'Don\'t take debates personally; it\'s how they process', 'Give them variety and new challenges', 'Be open to pivoting \u2014 they\'ll change direction when they see better'], needs: 'Creative freedom, stimulating conversation, room to experiment.', stresses: 'Rigid rules, repetitive tasks, ideas being shut down.' },
+  INFJ: { style: 'Insightful and purposeful. INFJs care deeply about meaning. Quiet but with strong convictions.', comms: ['Be genuine \u2014 they spot inauthenticity quickly', 'Connect decisions to purpose and values', 'Give them one-on-one time rather than large groups', 'Ask for their perspective \u2014 they won\'t volunteer unless invited'], needs: 'Meaningful work, harmony, time for reflection.', stresses: 'Conflict, superficiality, purely transactional environments.' },
+  INFP: { style: 'Creative and empathetic. INFPs are driven by values and authenticity.', comms: ['Lead with empathy \u2014 how you say it matters', 'Frame feedback constructively and kindly', 'Give creative freedom and trust their instincts', 'Respect their need for quiet time'], needs: 'Authentic relationships, creative expression, values alignment.', stresses: 'Harsh environments, rigid structures, values being compromised.' },
+  ENFJ: { style: 'Charismatic and supportive. ENFJs naturally bring people together and champion the team.', comms: ['Acknowledge their efforts \u2014 they invest a lot in people', 'Be open about how you\'re feeling', 'Include them in collaboration; they thrive on teamwork', 'Give clear feedback rather than letting things fester'], needs: 'Connection, appreciation, positive impact on others.', stresses: 'Apathy, isolation, feeling they can\'t help.' },
+  ENFP: { style: 'Enthusiastic and imaginative. ENFPs bring energy and creativity to everything.', comms: ['Match their energy \u2014 enthusiasm matters to them', 'Big picture first, details later', 'Give room to brainstorm before narrowing down', 'Help them prioritise \u2014 too many exciting options is a real struggle'], needs: 'Inspiration, variety, authentic connections.', stresses: 'Monotony, micromanagement, cold environments.' },
+  ISTJ: { style: 'Reliable and thorough. ISTJs get things done properly and on time, every time.', comms: ['Be clear and specific about expectations', 'Respect their processes \u2014 they have systems for a reason', 'Provide facts and data, not abstract theories', 'Follow through on promises; they notice when you don\'t'], needs: 'Clear structure, reliability, respect for process.', stresses: 'Chaos, last-minute changes, people not following through.' },
+  ISFJ: { style: 'Caring and conscientious. ISFJs are quietly supportive, making sure nothing falls through the cracks.', comms: ['Show appreciation \u2014 thank you goes a long way', 'Don\'t spring big changes; give them time to adjust', 'Ask how they\'re doing; they put others first', 'Be specific when you need something'], needs: 'Stability, appreciation, supportive environment.', stresses: 'Conflict, being taken for granted, chaos.' },
+  ESTJ: { style: 'Organised and decisive. ESTJs bring structure and accountability.', comms: ['Be punctual, prepared, and direct', 'Present facts and practical evidence', 'Don\'t take directness as aggression', 'Give them clear ownership and they\'ll deliver'], needs: 'Order, accountability, a team that pulls its weight.', stresses: 'Disorganisation, missed deadlines, wishy-washy decisions.' },
+  ESFJ: { style: 'Warm and organised. ESFJs are the social glue \u2014 they keep people connected and things running.', comms: ['Be warm and personable; chat before business', 'Give public recognition for contributions', 'Be sensitive with criticism', 'Include them in decisions; being left out hurts'], needs: 'Belonging, appreciation, harmonious dynamic.', stresses: 'Criticism, exclusion, cold environments.' },
+  ISTP: { style: 'Practical and adaptable. ISTPs are hands-on problem solvers who stay calm under pressure.', comms: ['Keep it brief and practical', 'Give freedom to figure things out their way', 'Don\'t hover; trust their competence', 'Respect their quiet \u2014 they\'re processing, not disengaged'], needs: 'Independence, hands-on work, flexibility.', stresses: 'Excessive meetings, rigid rules, forced emotional sharing.' },
+  ISFP: { style: 'Gentle and creative. ISFPs bring quiet care and aesthetics to their work.', comms: ['Be kind and genuine', 'Give creative space, avoid micromanaging', 'Show interest in their work; they take pride in craft', 'One-on-one works better than big groups'], needs: 'Creative freedom, positive atmosphere, feeling valued.', stresses: 'Conflict, criticism of their work, rigid environments.' },
+  ESTP: { style: 'Bold and pragmatic. ESTPs are action-oriented and thrive in fast-paced situations.', comms: ['Get to the point quickly', 'Be open to spontaneity', 'Give hands-on challenges, not theoretical discussions', 'Don\'t be offended by bluntness \u2014 it\'s efficiency'], needs: 'Action, variety, freedom to take risks.', stresses: 'Bureaucracy, slow decisions, theoretical discussions.' },
+  ESFP: { style: 'Fun-loving and people-oriented. ESFPs bring energy and optimism to the team.', comms: ['Keep the energy positive', 'Make work fun where possible', 'Give immediate, genuine feedback', 'Don\'t overload with rules and paperwork'], needs: 'Fun, social connection, lively environment.', stresses: 'Isolation, excessive structure, dull repetitive work.' },
+};
+
+const DIM_INSIGHTS = {
+  Energy: {
+    heavy_left: (pct) => `${pct}% of your team are Extraverts. You've got energy, collaboration, and people who think out loud. Build in written summaries after verbal decisions so the full team stays aligned. Watch that your introverts aren't getting steamrolled.`,
+    heavy_right: (pct) => `${pct}% of your team are Introverts. Deep thinkers who do their best work with focus time. Favour async communication and make sure the quieter voices get explicitly invited to contribute.`,
+    balanced: () => `Nice balance of introverts and extraverts. Pair them intentionally: extraverts help introverts share ideas, introverts help extraverts slow down and think.`,
+  },
+  Mind: {
+    heavy_left: (pct) => `${pct}% are Sensing types \u2014 practical and grounded. Great at execution, but big-picture thinking might get dismissed too quickly. Deliberately allocate time for "what if" thinking.`,
+    heavy_right: (pct) => `${pct}% are Intuitive types \u2014 big-picture thinkers. Never short on vision, but detail and follow-through might suffer. Make sure someone translates ideas into concrete action plans.`,
+    balanced: () => `Healthy split between Sensing and Intuition. Let Intuitive types set the vision, then Sensing types map out the how.`,
+  },
+  Nature: {
+    heavy_left: (pct) => `${pct}% are Thinking types. Sharp decisions, but might accidentally bulldoze feelings. Invest time in "how will people feel about this?" before communicating change.`,
+    heavy_right: (pct) => `${pct}% are Feeling types. Strong relationships and empathy, but may struggle with tough calls. Make sure someone is comfortable voicing "what does the data say?"`,
+    balanced: () => `Balanced Thinking/Feeling split \u2014 that tension is productive. Make sure both sides are heard before landing on decisions.`,
+  },
+  Tactics: {
+    heavy_left: (pct) => `${pct}% are Judging types. This team ships \u2014 organised, tracked, on time. Leave room for pivots and don't use "we already planned it" to shut down better ideas.`,
+    heavy_right: (pct) => `${pct}% are Perceiving types. Creative and adaptive, but deadlines might feel like suggestions. Be explicit about hard vs. flexible deadlines.`,
+    balanced: () => `Both planners and improvisers. Let Judging types own the timeline, Perceiving types challenge it when conditions change.`,
+  },
+  Identity: {
+    heavy_left: (pct) => `${pct}% are Assertive types. Your team is confident and emotionally steady under pressure \u2014 great for resilience. The risk? They may underestimate problems, brush off valid concerns, or seem dismissive of people who are struggling. Make sure confidence doesn't become complacency. Actively seek out what could go wrong.`,
+    heavy_right: (pct) => `${pct}% are Turbulent types. Your team is self-aware, detail-conscious, and driven to improve \u2014 they'll catch issues others miss. But they may also overthink, second-guess decisions, and be harder on themselves than necessary. Build in positive reinforcement. Celebrate wins before moving to the next problem. Make it safe to fail.`,
+    balanced: () => `A healthy mix of Assertive and Turbulent types. Assertive members bring confidence and calm under pressure; Turbulent members bring vigilance and a drive to improve. This is a powerful combination \u2014 use it. Let Assertive types steady the ship during high-pressure moments, and let Turbulent types flag risks and push for higher standards.`,
+  },
+};
+
+// ---------------------------------------------------------------------------
+// View toggle: Matrix (edit/explore) vs Cheat Sheet (shareable team summary)
+// ---------------------------------------------------------------------------
+let currentView = 'matrix';
+
+function setView(view, opts = {}) {
+  currentView = view === 'cheatsheet' ? 'cheatsheet' : 'matrix';
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === currentView));
+
+  const cs = document.getElementById('cheatsheetContainer');
+  const pre = document.getElementById('prescreenContainer');
+  const res = document.getElementById('resultsContainer');
+  const shareBtn = document.getElementById('shareBtn');
+
+  if (currentView === 'cheatsheet') {
+    cs.classList.remove('hidden');
+    if (pre) pre.classList.add('hidden');
+    if (res) res.classList.add('hidden');
+    if (shareBtn) shareBtn.style.display = 'inline-block';
+    renderCheatsheet();
+  } else {
+    cs.classList.add('hidden');
+    if (shareBtn) shareBtn.style.display = 'none';
+    renderGate(); // restores prescreen/results based on hasChosenSlice
+  }
+
+  if (!opts.skipUrl) updateUrlForView();
+}
+
+function updateUrlForView() {
+  const params = new URLSearchParams();
+  if (currentView === 'cheatsheet') {
+    params.set('view', 'cheatsheet');
+    if (activeFilters.team)  params.set('team',  activeFilters.team);
+    if (activeFilters.tribe) params.set('tribe', activeFilters.tribe);
+    if (activeFilters.squad) params.set('squad', activeFilters.squad);
+  }
+  const qs = params.toString();
+  const url = qs ? ('?' + qs) : window.location.pathname;
+  history.replaceState(null, '', url);
+}
+
+async function copyShareLink() {
+  updateUrlForView();
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    const btn = document.getElementById('shareBtn');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1600);
+  } catch(e) { alert('Could not copy. Link: ' + window.location.href); }
+}
+
+// ---------------------------------------------------------------------------
+// Cheat sheet rendering (uses the same members[] and activeFilters as the matrix)
+// ---------------------------------------------------------------------------
+
+const CS_TYPE_DATA = {
+  INTJ: { style: 'Strategic and independent. Thinks in systems and long-term plans. Values competence and efficiency.', comms: ['Be direct and logical — skip small talk', 'Come with a clear rationale; they respect well-reasoned arguments', 'Give them space to work independently', 'Don\u2019t take bluntness personally — they\u2019re focused on the idea'], needs: 'Autonomy, intellectual challenge, a clear vision.', stresses: 'Inefficiency, constant social interaction, decisions made without logic.' },
+  INTP: { style: 'For INTPs, the best conversations are like brainstorming sessions — plenty of room for unconventional thoughts and what-ifs. They skip small talk and dive into problems, flaws, and theories.', comms: ['Be direct and logical — no beating around the bush', 'Give them time and space to think before expecting an answer', 'Ask about the theory they\u2019re chewing on, not "how\u2019s work?"', '1:1s beat group settings — they engage better one-on-one', 'In tough conversations, explain calmly — a dramatic monologue won\u2019t land'], needs: 'Time to think, interesting problems, freedom to explore.', stresses: 'Strict routines, emotional decision-making, being put on the spot.' },
+  ENTJ: { style: 'Decisive and direct. Selective with their time, gravitates toward sharp, ambitious people. Prefers interactions with substance over small talk.', comms: ['Be confident, direct, and logical — get to the point', 'Argue with facts, not feelings — emotional appeals feel manipulative', 'Connect your message to the big picture or what\u2019s innovative', 'Don\u2019t assume they read emotions — tell them when you want listening vs. solving', 'It\u2019s okay to push back if their directness starts to feel overbearing'], needs: 'Clear goals, competent teammates, ability to lead.', stresses: 'Indecisiveness, lack of progress, people not pulling their weight.' },
+  ENTP: { style: 'Inventive and energetic. Idea machine who loves brainstorming and debating.', comms: ['Engage with their ideas enthusiastically', 'Don\u2019t take debates personally; it\u2019s how they process', 'Give them variety and new challenges', 'Be open to pivoting'], needs: 'Creative freedom, stimulating conversation, room to experiment.', stresses: 'Rigid rules, repetitive tasks, ideas being shut down.' },
+  INFJ: { style: 'Warm, sensitive, and depth-seeking. 87% of Advocates find deep conversations easier to maintain than lighthearted ones — small talk is a slog.', comms: ['Skip the small talk — they prefer meaningful conversation', 'Favour smaller, 1:1 settings over big meetings', 'Give them time to process before expecting a response', 'Show genuine interest and provide context — don\u2019t be transactional', 'Feedback should be specific, constructive, and delivered with care', 'Invite their view explicitly — they may hint rather than ask directly'], needs: 'Meaningful work, harmony, time for reflection.', stresses: 'Conflict, superficiality, purely transactional environments.' },
+  INFP: { style: 'Creative and empathetic. Driven by values and authenticity.', comms: ['Lead with empathy — how you say it matters', 'Frame feedback constructively and kindly', 'Give creative freedom and trust their instincts', 'Respect their need for quiet time'], needs: 'Authentic relationships, creative expression, values alignment.', stresses: 'Harsh environments, rigid structures, values being compromised.' },
+  ENFJ: { style: 'Eloquent and sensitive communicators — confident, supportive, and gifted with the gab. Harmony matters to them in every relationship.', comms: ['Talk about purpose and impact — especially how work helps others grow', 'Be direct and authentic — no vague responses, half-hearted plans, or ghosting', 'Ask meaningful questions ("What\u2019s been inspiring you?") over small talk', 'Frame criticism constructively — they\u2019ll catch the point and respect the care', 'Resolve disagreements quickly — they need to know there\u2019s no lingering bitterness'], needs: 'Connection, appreciation, positive impact on others.', stresses: 'Apathy, isolation, feeling they can\u2019t help.' },
+  ENFP: { style: 'Empathetic, expressive, and relationship-focused. Agile communicators who use wit, humour, and storytelling to pull people in.', comms: ['Match the energy — bring warmth, humour, and enthusiasm', 'Talk about people and ideas, not dry facts or cold reality', 'Ask about their dreams and what inspires them — they\u2019ll share freely', 'Make room for emotional connection, even in work conversations', 'Keep it varied — monotonous, isolated, data-only chats deflate them'], needs: 'Inspiration, variety, authentic connections.', stresses: 'Monotony, micromanagement, cold environments.' },
+  ISTJ: { style: 'Reliable and thorough. Gets things done properly and on time, every time.', comms: ['Be clear and specific about expectations', 'Respect their processes', 'Provide facts and data, not abstract theories', 'Follow through on promises'], needs: 'Clear structure, reliability, respect for process.', stresses: 'Chaos, last-minute changes, people not following through.' },
+  ISFJ: { style: 'Caring and conscientious. Quietly supportive, makes sure nothing falls through the cracks.', comms: ['Show appreciation — thank you goes a long way', 'Don\u2019t spring big changes; give them time', 'Ask how they\u2019re doing; they put others first', 'Be specific when you need something'], needs: 'Stability, appreciation, supportive environment.', stresses: 'Conflict, being taken for granted, chaos.' },
+  ESTJ: { style: 'Organised and decisive. Brings structure and accountability.', comms: ['Be punctual, prepared, and direct', 'Present facts and practical evidence', 'Don\u2019t take directness as aggression', 'Give clear ownership and they\u2019ll deliver'], needs: 'Order, accountability, a team that pulls its weight.', stresses: 'Disorganisation, missed deadlines, wishy-washy decisions.' },
+  ESFJ: { style: 'Warm and organised. The social glue — keeps people connected and things running.', comms: ['Be warm and personable; chat before business', 'Give public recognition for contributions', 'Be sensitive with criticism', 'Include them in decisions'], needs: 'Belonging, appreciation, harmonious dynamic.', stresses: 'Criticism, exclusion, cold environments.' },
+  ISTP: { style: 'Practical and adaptable. Hands-on problem solver who stays calm under pressure.', comms: ['Keep it brief and practical', 'Give freedom to figure things out their way', 'Don\u2019t hover; trust their competence', 'Respect their quiet — they\u2019re processing'], needs: 'Independence, hands-on work, flexibility.', stresses: 'Excessive meetings, rigid rules, forced emotional sharing.' },
+  ISFP: { style: 'Gentle and creative. Brings quiet care and aesthetics to their work.', comms: ['Be kind and genuine', 'Give creative space, avoid micromanaging', 'Show interest in their work; they take pride in craft', '1:1 works better than big groups'], needs: 'Creative freedom, positive atmosphere, feeling valued.', stresses: 'Conflict, criticism of their work, rigid environments.' },
+  ESTP: { style: 'Bold and pragmatic. Action-oriented and thrives in fast-paced situations.', comms: ['Get to the point quickly', 'Be open to spontaneity', 'Give hands-on challenges', 'Don\u2019t be offended by bluntness — it\u2019s efficiency'], needs: 'Action, variety, freedom to take risks.', stresses: 'Bureaucracy, slow decisions, theoretical discussions.' },
+  ESFP: { style: 'Fun-loving and people-oriented. Brings energy and optimism to the team.', comms: ['Keep the energy positive', 'Make work fun where possible', 'Give immediate, genuine feedback', 'Don\u2019t overload with rules and paperwork'], needs: 'Fun, social connection, lively environment.', stresses: 'Isolation, excessive structure, dull repetitive work.' }
+};
+
+function csQuadOf(code) {
+  if (code.includes('NT')) return 'NT';
+  if (code.includes('NF')) return 'NF';
+  if (code[1] === 'S' && code[3] === 'J') return 'SJ';
+  if (code[1] === 'S' && code[3] === 'P') return 'SP';
+  return '';
+}
+
+function csBuildDiagnosis(list) {
+  const n = list.length;
+  if (n === 0) return { headline: '', observations: [], stats: { n: 0, quadCount: { NT:0,NF:0,SJ:0,SP:0 } } };
+  const q = { NT: 0, NF: 0, SJ: 0, SP: 0 };
+  const typeCount = {};
+  let E=0,I=0,N=0,S=0,F=0,T=0,J=0,P=0,A=0,Tu=0;
+  list.forEach(m => {
+    const c = m.typeCode;
+    q[csQuadOf(c)]++;
+    typeCount[c] = (typeCount[c] || 0) + 1;
+    c[0]==='E' ? E++ : I++;
+    c[1]==='N' ? N++ : S++;
+    c[2]==='F' ? F++ : T++;
+    c[3]==='J' ? J++ : P++;
+    m.identity === 'A' ? A++ : Tu++;
+  });
+  const dom = Object.entries(typeCount).sort((a,b) => b[1]-a[1])[0];
+  const domName = TYPE_NAMES[dom[0]];
+  const headline = `${n} ${n===1?'person':'people'}. ${q.NF} Diplomat${q.NF===1?'':'s'}, ${q.NT} Analyst${q.NT===1?'':'s'}, and ${dom[1]} <span class="hl">${domName}${dom[1]===1?'':'s'}</span> ${dom[1]===1 ? 'steering' : 'steering'} the ship.`;
+
+  const obs = [];
+  if (q.NF >= Math.ceil(n*0.6)) obs.push({ cls: '', h: 'Diplomat-heavy', p: `${q.NF} of ${n} are Diplomats (NFs). Expect purpose-led thinking, empathy, and a team that cares how decisions land on people.` });
+  if (N === n && n > 1) obs.push({ cls: 'yellow', h: 'Zero Sensors', p: `Every single person is Intuitive. Big-picture thinking is your superpower — actively pull in data, details, and done-before examples before locking in decisions.` });
+  else if (N >= n*0.8) obs.push({ cls: 'yellow', h: 'Big-picture heavy', p: `${N}/${n} are Intuitive. Vision-rich, detail-light. Appoint someone to sanity-check the specifics.` });
+  if (q.SJ === 0 && q.SP === 0 && n > 2) obs.push({ cls: 'pink', h: 'No Sentinels or Explorers', p: `Nobody is naturally the "structured logistics" person or the "hands-on, try it now" person. Nail down process and prototypes deliberately — they won\u2019t just appear.` });
+  if (J >= n*0.75) obs.push({ cls: 'sky', h: 'Decisive bunch', p: `${J}/${n} are Judgers. You\u2019ll make decisions fast. Watch for closing off options before you\u2019ve really explored them.` });
+  else if (P >= n*0.75) obs.push({ cls: 'sky', h: 'Explorer mode', p: `${P}/${n} are Perceivers. Keeps options open but risks drift — set deadlines and force a decision.` });
+  if (F >= n*0.7) obs.push({ cls: 'green', h: 'Feels-first', p: `${F}/${n} are Feelers. Harmony is baked in — but someone needs to bring the cold "but is this the right call?" energy.` });
+  if (E >= n*0.65) obs.push({ cls: '', h: 'Extravert-leaning', p: `${E}/${n} are Extraverts. Great for energy and collab — make sure the ${I} Introverts aren\u2019t getting steamrolled in meetings.` });
+  else if (I >= n*0.65) obs.push({ cls: '', h: 'Introvert-leaning', p: `${I}/${n} are Introverts. Favour async and give processing time before expecting hot takes.` });
+  if (A >= n*0.6) obs.push({ cls: 'green', h: 'Confident by default', p: `${A}/${n} are Assertive. Less self-doubt, more "let\u2019s go". Double-check you\u2019re not glossing over real risks.` });
+  else if (Tu >= n*0.6) obs.push({ cls: 'yellow', h: 'Self-critical streak', p: `${Tu}/${n} are Turbulent. Driven, detail-obsessed, occasionally hard on themselves. Celebrate wins loudly.` });
+
+  return { headline, observations: obs.slice(0, 5), stats: { n, quadCount: q } };
+}
+
+function csBarRow(leftLabel, rightLabel, pctVal) {
+  return `<div class="cs-bar"><span class="left">${leftLabel}</span><div class="track"><div class="dot" style="left: ${pctVal}%"></div></div><span class="right">${rightLabel}</span></div>`;
+}
+
+function csRenderMember(m) {
+  const code = m.typeCode;
+  const data = CS_TYPE_DATA[code] || { style: '', comms: [], needs: '', stresses: '' };
+  const roleName = TYPE_NAMES[code] || code;
+  const q = csQuadOf(code);
+  const identityLabel = m.identity === 'A' ? 'Assertive' : 'Turbulent';
+  const p = m.pcts;
+  const bars = [
+    csBarRow('E', 'I', p.EI),
+    csBarRow('S', 'N', p.SN),
+    csBarRow('T', 'F', p.TF),
+    csBarRow('J', 'P', p.JP),
+    csBarRow('A', 'T', p.AT)
+  ].join('');
+  return `<article class="cs-card">
+    <header class="cs-card-head">
+      <div><h3 class="cs-card-name">${m.name}</h3><p class="cs-card-role">${roleName} · ${identityLabel}</p></div>
+      <span class="cs-badge">${code}-${m.identity}</span>
+    </header>
+    <div class="cs-bars">${bars}</div>
+    <div class="cs-block"><h4>Their style</h4><p>${data.style}</p></div>
+    <div class="cs-block"><h4>How they like to communicate</h4><ul>${data.comms.map(c => `<li>${c}</li>`).join('')}</ul></div>
+    <div class="cs-block"><h4>What they need</h4><p>${data.needs}</p></div>
+    <div class="cs-block"><h4>What winds them up</h4><p>${data.stresses}</p></div>
+  </article>`;
+}
+
+function scopeLabel() {
+  const parts = [];
+  if (activeFilters.team)  parts.push(activeFilters.team);
+  if (activeFilters.tribe) parts.push(activeFilters.tribe);
+  if (activeFilters.squad) parts.push(activeFilters.squad);
+  return parts.length ? parts.join(' · ') : 'Whole team';
+}
+
+function renderCheatsheet() {
+  const host = document.getElementById('cheatsheetContainer');
+  const list = visibleMembers();
+  const scope = scopeLabel();
+
+  const scopePicker = `<div class="cs-scope">
+    <span class="cs-scope-label">Viewing:</span>
+    ${['team','tribe','squad'].map(k => `
+      <select onchange="onFilterChange('${k}', this.value); renderCheatsheet(); updateUrlForView();">
+        <option value="">All ${TAG_LABEL[k].toLowerCase()}s</option>
+        ${TAG_OPTIONS[k].map(v => `<option value="${v}" ${activeFilters[k]===v?'selected':''}>${v}</option>`).join('')}
+      </select>
+    `).join('')}
+    <span class="cs-scope-count">${list.length} ${list.length===1?'person':'people'}</span>
+  </div>`;
+
+  if (list.length === 0) {
+    host.innerHTML = `<div class="cs-wrap">${scopePicker}<div class="cs-empty"><h2>Nobody matches that slice</h2><p>Clear a filter or add people in the Matrix view.</p></div></div>`;
+    return;
+  }
+
+  const d = csBuildDiagnosis(list);
+  const hero = `<div class="cs-hero">
+    <div class="cs-kicker">MrQ · Team Cheat Sheet · ${scope}</div>
+    <h2>How we <span class="hl">click.</span></h2>
+    <p>A cheat sheet for working with ${scope === 'Whole team' ? 'the team' : scope}. Scan a card before a 1:1, or just get the vibe.</p>
+    <div class="cs-meta">
+      <span class="cs-pill"><b>${d.stats.n}</b> people</span>
+      <span class="cs-pill"><b>${d.stats.quadCount.NF}</b> Diplomats</span>
+      <span class="cs-pill"><b>${d.stats.quadCount.NT}</b> Analysts</span>
+      <span class="cs-pill"><b>${d.stats.quadCount.SJ}</b> Sentinels</span>
+      <span class="cs-pill"><b>${d.stats.quadCount.SP}</b> Explorers</span>
+    </div>
+  </div>`;
+
+  const diag = `<div class="cs-diag">
+    <h2 class="cs-diag-headline">${d.headline}</h2>
+    <div class="cs-diag-grid">${d.observations.map(o => `<div class="cs-diag-item ${o.cls}"><h3>${o.h}</h3><p>${o.p}</p></div>`).join('')}</div>
+  </div>`;
+
+  const profiles = `<div class="cs-section-head"><h2>The team, one card at a time</h2><span class="sub">${list.length} ${list.length===1?'person':'people'}</span></div>
+    <section class="cs-profiles">${list.map(csRenderMember).join('')}</section>`;
+
+  host.innerHTML = `<div class="cs-wrap">${scopePicker}${hero}${diag}${profiles}</div>`;
+}
+
+// ---------------------------------------------------------------------------
+// Bootstrap: load members from API, apply URL params, render
+// ---------------------------------------------------------------------------
+async function bootstrap() {
+  try {
+    members = await apiGet('/api/members');
+  } catch (e) {
+    console.error('Failed to load members:', e);
+    alert('Could not load the team from the server. Check your connection and refresh.');
+    return;
+  }
+
+  // Apply URL parameters
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('team'))  activeFilters.team  = params.get('team');
+  if (params.get('tribe')) activeFilters.tribe = params.get('tribe');
+  if (params.get('squad')) activeFilters.squad = params.get('squad');
+
+  const wantCheatsheet = params.get('view') === 'cheatsheet';
+
+  if (wantCheatsheet) {
+    hasChosenSlice = true; // cheat sheet comes pre-gated
+    setView('cheatsheet', { skipUrl: true });
+  } else {
+    renderGate();
+    renderRoster();
+    render();
+  }
+}
+
+bootstrap();
+</script>
+</body>
+</html>
