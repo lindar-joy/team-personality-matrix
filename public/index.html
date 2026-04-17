@@ -22,6 +22,46 @@
   .user-logout { color: #5B6593; text-decoration: none; padding: 4px 10px; border-radius: 999px; font-weight: 600; border-left: 1px solid #E4E7F5; margin-left: 4px; }
   .user-logout:hover { background: #F0F2FB; color: #0B2595; }
 
+  /* Edit form in member detail panel */
+  .member-edit-form { padding: 4px 0; }
+  .edit-field { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .edit-field label { font-size: 12px; font-weight: 700; color: #0B2595; min-width: 50px; }
+  .edit-field input[type="text"], .edit-field select {
+    flex: 1; padding: 7px 10px; border: 2px solid #d1d5db; border-radius: 8px;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; outline: none;
+  }
+  .edit-field input:focus, .edit-field select:focus { border-color: var(--mrq-blue); }
+  .edit-tag-section { margin: 12px 0; }
+  .edit-tag-section > label { font-size: 12px; font-weight: 700; color: #0B2595; display: block; margin-bottom: 6px; }
+  .tag-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; min-height: 20px; }
+  .tag-pill { display: inline-flex; align-items: center; gap: 4px; background: #E8ECFC; color: #0B2595; font-size: 11px; font-weight: 600; padding: 4px 8px 4px 10px; border-radius: 999px; }
+  .tag-pill-remove { cursor: pointer; font-size: 14px; line-height: 1; opacity: 0.5; }
+  .tag-pill-remove:hover { opacity: 1; }
+  .tag-add-row { display: flex; gap: 6px; }
+  .tag-add-input { flex: 1; padding: 6px 10px; border: 2px solid #d1d5db; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 12px; outline: none; }
+  .tag-add-input:focus { border-color: var(--mrq-blue); }
+  .tag-add-input::placeholder { color: #9ca3af; }
+  .tag-add-btn { padding: 6px 12px; background: #E8ECFC; color: #0B2595; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .tag-add-btn:hover { background: #D8DEFC; }
+  .edit-pct-section { margin: 12px 0; }
+  .edit-pct-section h4 { font-size: 12px; font-weight: 700; color: #0B2595; margin-bottom: 8px; }
+  .edit-pct-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .edit-pct-dim { font-size: 11px; font-weight: 600; color: #5B6593; min-width: 52px; }
+  .edit-pct-toggles { display: flex; gap: 2px; }
+  .edit-pct-toggles button { padding: 4px 8px; border: 1.5px solid #d1d5db; background: white; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; color: #5B6593; font-family: 'Inter', sans-serif; }
+  .edit-pct-toggles button.active { border-color: var(--mrq-blue); background: #E8ECFC; color: #0B2595; }
+  .edit-pct-num { width: 50px; padding: 4px 6px; border: 2px solid #d1d5db; border-radius: 6px; font-size: 12px; text-align: center; outline: none; font-family: 'Inter', sans-serif; }
+  .edit-pct-num:focus { border-color: var(--mrq-blue); }
+  .edit-actions { display: flex; gap: 8px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #E4E7F5; }
+  .edit-actions .btn-save { padding: 8px 20px; background: var(--mrq-blue); color: white; border: none; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .edit-actions .btn-save:hover { background: var(--mrq-navy); }
+  .edit-actions .btn-cancel { padding: 8px 16px; background: white; color: #5B6593; border: 2px solid #d1d5db; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .edit-actions .btn-cancel:hover { border-color: var(--mrq-blue); color: var(--mrq-blue); }
+  .detail-edit { background: none; border: 2px solid #d1d5db; color: #5B6593; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 12px; border-radius: 8px; margin-right: 8px; }
+  .detail-edit:hover { border-color: var(--mrq-blue); color: var(--mrq-blue); }
+  .member-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .member-tag-pill { display: inline-flex; font-size: 10px; font-weight: 600; color: #0B2595; background: #E8ECFC; padding: 2px 8px; border-radius: 999px; }
+
   /* Add form */
   .add-form {
     max-width: 600px; margin: 0 auto 28px; background: white; border-radius: 14px;
@@ -1168,7 +1208,8 @@ function renderRoster() {
   const summary = `<div class="prescreen-roster-summary"><strong>${members.length}</strong> ${members.length === 1 ? 'person' : 'people'} added</div>`;
   const chips = members.map((m, i) => {
     const tagBits = [m.team, m.tribe, m.squad].filter(Boolean).join(' · ');
-    const tagHtml = tagBits ? `<span class="roster-chip-tag">${tagBits}</span>` : '';
+    const customTags = (m.tags || []).map(t => `<span class="member-tag-pill">${t}</span>`).join('');
+    const tagHtml = (tagBits ? `<span class="roster-chip-tag">${tagBits}</span>` : '') + customTags;
     const id = m.identity ? `-${m.identity}` : '';
     return `<span class="roster-chip">
       ${m.name}
@@ -1499,8 +1540,12 @@ function renderMemberDetail() {
         <span class="member-type-badge">${t.code}${m.identity ? '-' + m.identity : ''}</span>
         <span class="member-type-label">${t.name}</span>
       </div>
-      <button class="detail-close" onclick="selectedMember=null;render();">&times;</button>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <button class="detail-edit" onclick="editMember(${selectedMember})">Edit</button>
+        <button class="detail-close" onclick="selectedMember=null;render();">&times;</button>
+      </div>
     </div>
+    ${(m.tags && m.tags.length) ? `<div class="member-tags">${m.tags.map(t => `<span class="member-tag-pill">${t}</span>`).join('')}</div>` : ''}
     <div class="member-detail-body">
       <div class="member-detail-left">
         ${barsHtml}
@@ -1520,6 +1565,149 @@ function renderMemberDetail() {
   `;
   // Scroll to panel
   panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ============ Edit member ============
+let editingMember = null;
+
+function editMember(idx) {
+  editingMember = idx;
+  renderMemberEdit();
+}
+
+function cancelEdit() {
+  editingMember = null;
+  renderMemberDetail();
+}
+
+function renderMemberEdit() {
+  const panel = document.getElementById('memberDetailPanel');
+  if (editingMember === null || !members[editingMember]) { cancelEdit(); return; }
+  const m = members[editingMember];
+  const tags = m.tags || [];
+
+  const dims = [
+    { key: 'EI', label: 'Energy', sides: ['E','I'], names: ['Extraverted','Introverted'] },
+    { key: 'SN', label: 'Mind',   sides: ['S','N'], names: ['Observant','Intuitive'] },
+    { key: 'TF', label: 'Nature', sides: ['T','F'], names: ['Thinking','Feeling'] },
+    { key: 'JP', label: 'Tactics',sides: ['J','P'], names: ['Judging','Prospecting'] },
+    { key: 'AT', label: 'Identity',sides:['A','T'], names: ['Assertive','Turbulent'] },
+  ];
+
+  const pctRows = m.pcts ? dims.map(d => {
+    const val = m.pcts[d.key];
+    const isFirst = val < 50;
+    const displayPct = val === 50 ? 50 : (isFirst ? 100 - val : val);
+    return `<div class="edit-pct-row" data-dim="${d.key}">
+      <span class="edit-pct-dim">${d.label}</span>
+      <div class="edit-pct-toggles">
+        <button ${isFirst ? 'class="active"' : ''} onclick="editToggleDim(this)">${d.names[0]}</button>
+        <button ${!isFirst ? 'class="active"' : ''} onclick="editToggleDim(this)">${d.names[1]}</button>
+      </div>
+      <input type="number" min="50" max="100" class="edit-pct-num" id="editNum${d.key}" value="${displayPct}">
+      <span style="font-size:11px;color:#9ca3af;">%</span>
+    </div>`;
+  }).join('') : '';
+
+  const teamOpts = ['', 'Product', 'Engineering', 'QA', 'Design'];
+  const tribeOpts = ['', 'Onboarding', 'Entertainment', 'Platform', 'PQ'];
+  const squadOpts = ['', 'Acquisition', 'P&V', 'C&R', 'Goosicorn', 'Platform', 'PQ'];
+  const opt = (opts, cur) => opts.map(o => `<option value="${o}" ${o === cur ? 'selected' : ''}>${o || '\u2014'}</option>`).join('');
+
+  const tagPillsHtml = tags.map(t =>
+    `<span class="tag-pill">${t}<span class="tag-pill-remove" onclick="this.parentElement.remove()">\u00d7</span></span>`
+  ).join('');
+
+  panel.classList.add('visible');
+  panel.innerHTML = `
+    <div class="member-detail-header">
+      <div class="member-detail-name"><h2>Edit ${m.name}</h2></div>
+      <button class="detail-close" onclick="cancelEdit()">\u00d7</button>
+    </div>
+    <div class="member-edit-form">
+      <div class="edit-field"><label>Name</label><input type="text" id="editName" value="${m.name}"></div>
+      <div class="edit-field"><label>Team</label><select id="editTeam">${opt(teamOpts, m.team)}</select></div>
+      <div class="edit-field"><label>Tribe</label><select id="editTribe">${opt(tribeOpts, m.tribe)}</select></div>
+      <div class="edit-field"><label>Squad</label><select id="editSquad">${opt(squadOpts, m.squad)}</select></div>
+      <div class="edit-tag-section">
+        <label>Tags</label>
+        <div class="tag-pills" id="editTagPills">${tagPillsHtml}</div>
+        <div class="tag-add-row">
+          <input type="text" class="tag-add-input" id="editTagInput" placeholder="Type a tag and press Enter" onkeydown="if(event.key==='Enter'){event.preventDefault();editAddTag();}">
+          <button class="tag-add-btn" onclick="editAddTag()">Add</button>
+        </div>
+      </div>
+      ${pctRows ? `<div class="edit-pct-section"><h4>Personality</h4>${pctRows}</div>` : ''}
+      <div class="edit-actions">
+        <button class="btn-save" onclick="saveEdit()">Save</button>
+        <button class="btn-cancel" onclick="cancelEdit()">Cancel</button>
+      </div>
+    </div>
+  `;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function editToggleDim(btn) {
+  const row = btn.closest('.edit-pct-row');
+  row.querySelectorAll('.edit-pct-toggles button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function editAddTag() {
+  const inp = document.getElementById('editTagInput');
+  const tag = inp.value.trim();
+  if (!tag) return;
+  const pills = document.getElementById('editTagPills');
+  pills.insertAdjacentHTML('beforeend',
+    `<span class="tag-pill">${tag}<span class="tag-pill-remove" onclick="this.parentElement.remove()">\u00d7</span></span>`
+  );
+  inp.value = '';
+  inp.focus();
+}
+
+function getEditTags() {
+  return Array.from(document.querySelectorAll('#editTagPills .tag-pill')).map(p => p.firstChild.textContent.trim());
+}
+
+async function saveEdit() {
+  if (editingMember === null) return;
+  const m = members[editingMember];
+  const name = document.getElementById('editName').value.trim();
+  if (!name) { alert('Name is required'); return; }
+
+  const payload = {
+    name,
+    team:  document.getElementById('editTeam').value,
+    tribe: document.getElementById('editTribe').value,
+    squad: document.getElementById('editSquad').value,
+    tags:  getEditTags()
+  };
+
+  if (m.pcts) {
+    const dims = ['EI','SN','TF','JP','AT'];
+    const pcts = {};
+    for (const d of dims) {
+      const row = document.querySelector(`.edit-pct-row[data-dim="${d}"]`);
+      if (!row) { pcts[d] = m.pcts[d]; continue; }
+      const btns = row.querySelectorAll('.edit-pct-toggles button');
+      const isFirst = btns[0].classList.contains('active');
+      const num = parseInt(row.querySelector('.edit-pct-num').value) || 50;
+      pcts[d] = isFirst ? (100 - num) : num;
+    }
+    payload.pcts = pcts;
+    payload.typeCode = codeFromPcts(pcts);
+    payload.identity = pcts.AT < 50 ? 'A' : 'T';
+  }
+
+  try {
+    const updated = await apiPut('/api/members/' + m.id, payload);
+    members[editingMember] = updated;
+  } catch (e) {
+    alert('Could not save: ' + e.message);
+    return;
+  }
+  editingMember = null;
+  render();
 }
 
 function renderDetail() {

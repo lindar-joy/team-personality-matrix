@@ -161,7 +161,8 @@ app.post('/api/members', async (req, res) => {
     pcts: { EI: b.pcts.EI, SN: b.pcts.SN, TF: b.pcts.TF, JP: b.pcts.JP, AT: b.pcts.AT },
     team:  b.team  || '',
     tribe: b.tribe || '',
-    squad: b.squad || ''
+    squad: b.squad || '',
+    tags:  Array.isArray(b.tags) ? b.tags : []
   };
   members.push(member);
   await save();
@@ -181,7 +182,8 @@ app.put('/api/members/:id', async (req, res) => {
     pcts:     b.pcts     ?? hit.member.pcts,
     team:     b.team     ?? hit.member.team,
     tribe:    b.tribe    ?? hit.member.tribe,
-    squad:    b.squad    ?? hit.member.squad
+    squad:    b.squad    ?? hit.member.squad,
+    tags:     b.tags     ?? hit.member.tags ?? []
   };
   members[hit.idx] = merged;
   await save();
@@ -206,7 +208,8 @@ app.post('/api/members/bulk', async (req, res) => {
     typeCode: m.typeCode,
     identity: m.identity || (m.pcts?.AT < 50 ? 'A' : 'T'),
     pcts: m.pcts,
-    team: m.team || '', tribe: m.tribe || '', squad: m.squad || ''
+    team: m.team || '', tribe: m.tribe || '', squad: m.squad || '',
+    tags: Array.isArray(m.tags) ? m.tags : []
   }));
   nextId = Math.max(nextId, members.reduce((m, x) => Math.max(m, x.id), 0) + 1);
   await save();
