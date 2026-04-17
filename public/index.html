@@ -42,6 +42,17 @@
   .chip-tag-input:focus { border-color: var(--mrq-blue); border-style: solid; background: white; color: #0B2595; }
   .chip-tag-input::placeholder { color: #9ca3af; }
 
+  /* Link out to the free 16personalities test */
+  .test-link {
+    display: inline-flex; align-items: center; gap: 8px; margin: 4px auto 18px;
+    padding: 9px 18px; background: #F0F2FB; color: #0B2595; text-decoration: none;
+    border-radius: 999px; border: 1.5px solid transparent;
+    font-size: 13px; font-weight: 600; transition: all 0.15s ease;
+  }
+  .test-link:hover { background: white; border-color: var(--mrq-blue); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(10,46,203,0.10); }
+  .test-link .test-link-arrow { font-weight: 800; transition: transform 0.15s ease; }
+  .test-link:hover .test-link-arrow { transform: translateX(3px); }
+
   /* Edit form in member detail panel */
   .member-edit-form { padding: 4px 0; }
   .edit-field { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
@@ -755,6 +766,10 @@
   <div class="prescreen prescreen-data">
     <h2>Drop your team in</h2>
     <p class="lead">Add yourself and your colleagues. When you're ready, jump to the team views — you can come back and add more anytime.</p>
+
+    <a class="test-link" href="https://www.16personalities.com/free-personality-test" target="_blank" rel="noopener noreferrer">
+      Don't know your type? Take the free test <span class="test-link-arrow">&rarr;</span>
+    </a>
 
 <!-- Add form lives inside the pre-screen now -->
 <div class="add-form">
