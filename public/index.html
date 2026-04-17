@@ -22,27 +22,35 @@
   .user-logout { color: #5B6593; text-decoration: none; padding: 4px 10px; border-radius: 999px; font-weight: 600; border-left: 1px solid #E4E7F5; margin-left: 4px; }
   .user-logout:hover { background: #F0F2FB; color: #0B2595; }
 
+  /* Unified chip picker — used for teams/tribes/squads/tags in add + edit forms */
+  .chip-group { margin-bottom: 14px; text-align: left; }
+  .chip-group-label { font-size: 10px; font-weight: 800; color: #5B6593; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; display: block; }
+  .chips-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .chip {
+    padding: 6px 14px; border: 1.5px solid #d1d5db; background: white; border-radius: 999px;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: #5B6593;
+    cursor: pointer; transition: all 0.15s ease; line-height: 1;
+  }
+  .chip:hover { border-color: var(--mrq-blue); color: var(--mrq-blue); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(10,46,203,0.08); }
+  .chip.selected { background: var(--mrq-blue); border-color: var(--mrq-blue); color: white; box-shadow: 0 2px 8px rgba(10,46,203,0.15); }
+  .chip.selected:hover { background: var(--mrq-navy); border-color: var(--mrq-navy); color: white; }
+  .chip-tag-input {
+    min-width: 110px; padding: 6px 12px; border: 1.5px dashed #c7cbd8; border-radius: 999px;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; outline: none;
+    background: transparent; color: #5B6593; transition: all 0.15s ease;
+  }
+  .chip-tag-input:focus { border-color: var(--mrq-blue); border-style: solid; background: white; color: #0B2595; }
+  .chip-tag-input::placeholder { color: #9ca3af; }
+
   /* Edit form in member detail panel */
   .member-edit-form { padding: 4px 0; }
-  .edit-field { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .edit-field label { font-size: 12px; font-weight: 700; color: #0B2595; min-width: 50px; }
-  .edit-field input[type="text"], .edit-field select {
-    flex: 1; padding: 7px 10px; border: 2px solid #d1d5db; border-radius: 8px;
-    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; outline: none;
+  .edit-field { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .edit-field label { font-size: 10px; font-weight: 800; color: #5B6593; text-transform: uppercase; letter-spacing: 0.8px; min-width: 50px; }
+  .edit-field input[type="text"] {
+    flex: 1; padding: 8px 12px; border: 2px solid #d1d5db; border-radius: 10px;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; outline: none;
   }
-  .edit-field input:focus, .edit-field select:focus { border-color: var(--mrq-blue); }
-  .edit-tag-section { margin: 12px 0; }
-  .edit-tag-section > label { font-size: 12px; font-weight: 700; color: #0B2595; display: block; margin-bottom: 6px; }
-  .tag-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; min-height: 20px; }
-  .tag-pill { display: inline-flex; align-items: center; gap: 4px; background: #E8ECFC; color: #0B2595; font-size: 11px; font-weight: 600; padding: 4px 8px 4px 10px; border-radius: 999px; }
-  .tag-pill-remove { cursor: pointer; font-size: 14px; line-height: 1; opacity: 0.5; }
-  .tag-pill-remove:hover { opacity: 1; }
-  .tag-add-row { display: flex; gap: 6px; }
-  .tag-add-input { flex: 1; padding: 6px 10px; border: 2px solid #d1d5db; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 12px; outline: none; }
-  .tag-add-input:focus { border-color: var(--mrq-blue); }
-  .tag-add-input::placeholder { color: #9ca3af; }
-  .tag-add-btn { padding: 6px 12px; background: #E8ECFC; color: #0B2595; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
-  .tag-add-btn:hover { background: #D8DEFC; }
+  .edit-field input:focus { border-color: var(--mrq-blue); }
   .edit-pct-section { margin: 12px 0; }
   .edit-pct-section h4 { font-size: 12px; font-weight: 700; color: #0B2595; margin-bottom: 8px; }
   .edit-pct-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
@@ -753,31 +761,7 @@
   <div class="add-row" style="margin-bottom:8px;">
     <input type="text" id="nameInput" placeholder="Who's joining?" />
   </div>
-  <div class="add-tag-row">
-    <select id="teamInput" class="tag-input">
-      <option value="">Team —</option>
-      <option value="Product">Product</option>
-      <option value="Engineering">Engineering</option>
-      <option value="QA">QA</option>
-      <option value="Design">Design</option>
-    </select>
-    <select id="tribeInput" class="tag-input">
-      <option value="">Tribe —</option>
-      <option value="Onboarding">Onboarding</option>
-      <option value="Entertainment">Entertainment</option>
-      <option value="Platform">Platform</option>
-      <option value="PQ">PQ</option>
-    </select>
-    <select id="squadInput" class="tag-input">
-      <option value="">Squad —</option>
-      <option value="Acquisition">Acquisition</option>
-      <option value="P&amp;V">P&amp;V</option>
-      <option value="C&amp;R">C&amp;R</option>
-      <option value="Goosicorn">Goosicorn</option>
-      <option value="Platform">Platform</option>
-      <option value="PQ">PQ</option>
-    </select>
-  </div>
+  <div id="addChipGroups"></div>
   <div>
     <p style="font-size:11px;font-weight:500;color:#9ca3af;margin-bottom:10px;">Match what's on their results page — pick the trait, type the number</p>
     <div class="pct-grid" id="pctInputs">
@@ -1042,13 +1026,86 @@ function codeFromPcts(p) {
   return pctToLetter(p.EI, 'EI') + pctToLetter(p.SN, 'SN') + pctToLetter(p.TF, 'TF') + pctToLetter(p.JP, 'JP');
 }
 
-// Canonical tag option lists (kept in sync with the form selects below)
+// Canonical tag option lists. Member fields are plural arrays: teams/tribes/squads/tags.
 const TAG_OPTIONS = {
-  team:   ['Product', 'Engineering', 'QA', 'Design'],
-  tribe:  ['Onboarding', 'Entertainment', 'Platform', 'PQ'],
-  squad:  ['Acquisition', 'P&V', 'C&R', 'Goosicorn', 'Platform', 'PQ']
+  teams:   ['Product', 'Engineering', 'QA', 'Design'],
+  tribes:  ['Onboarding', 'Entertainment', 'Platform', 'PQ'],
+  squads:  ['Acquisition', 'P&V', 'C&R', 'Goosicorn', 'Platform', 'PQ']
 };
-const TAG_LABEL = { team: 'Team', tribe: 'Tribe', squad: 'Squad' };
+const TAG_LABEL = { teams: 'Team', tribes: 'Tribe', squads: 'Squad', tags: 'Tags' };
+// Map the singular filter key (used in URL params + activeFilters) to its plural data field.
+const FIELD_FOR = { team: 'teams', tribe: 'tribes', squad: 'squads' };
+
+// Client-side safety net: accept legacy single-value team/tribe/squad and promote to arrays.
+function normaliseMember(m) {
+  const toArr = (plural, single) =>
+    Array.isArray(m[plural]) ? m[plural].filter(Boolean) : (m[single] ? [m[single]] : []);
+  return {
+    ...m,
+    teams:  toArr('teams', 'team'),
+    tribes: toArr('tribes', 'tribe'),
+    squads: toArr('squads', 'squad'),
+    tags:   Array.isArray(m.tags) ? m.tags : []
+  };
+}
+
+// ---- Chip picker (used for teams/tribes/squads/tags in add + edit forms) ----
+// `custom: true` adds a free-text input that creates new chips on Enter.
+function renderChipPicker({ pluralKey, selected = [], idPrefix = '', custom = false }) {
+  const presets = TAG_OPTIONS[pluralKey] || [];
+  const known = new Set(presets);
+  selected.forEach(s => known.add(s));
+  // Also pull in any values used elsewhere in the team so suggestions stay useful
+  if (custom || pluralKey === 'tags') {
+    members.forEach(m => (m.tags || []).forEach(t => known.add(t)));
+  }
+  const chipsHtml = Array.from(known).map(v =>
+    `<button type="button" class="chip${selected.includes(v) ? ' selected' : ''}" data-value="${escAttr(v)}" onclick="toggleChip(this)">${escText(v)}</button>`
+  ).join('');
+  const addInput = custom
+    ? `<input type="text" class="chip-tag-input" placeholder="+ Add tag" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomChip(this);}">`
+    : '';
+  return `<div class="chip-group">
+    <span class="chip-group-label">${TAG_LABEL[pluralKey]}</span>
+    <div class="chips-row" id="${idPrefix}-${pluralKey}">${chipsHtml}${addInput}</div>
+  </div>`;
+}
+
+function escText(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escAttr(s) { return escText(s); }
+
+function toggleChip(btn) {
+  btn.classList.toggle('selected');
+}
+
+function addCustomChip(inp) {
+  const v = inp.value.trim();
+  if (!v) return;
+  const row = inp.closest('.chips-row');
+  const existing = Array.from(row.querySelectorAll('.chip')).find(c => c.dataset.value === v);
+  if (existing) { existing.classList.add('selected'); inp.value = ''; return; }
+  inp.insertAdjacentHTML('beforebegin',
+    `<button type="button" class="chip selected" data-value="${escAttr(v)}" onclick="toggleChip(this)">${escText(v)}</button>`
+  );
+  inp.value = '';
+}
+
+function getSelectedChips(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return [];
+  return Array.from(container.querySelectorAll('.chip.selected')).map(c => c.dataset.value);
+}
+
+// Populate the add form's chip pickers (called on bootstrap)
+function renderAddForm() {
+  const host = document.getElementById('addChipGroups');
+  if (!host) return;
+  host.innerHTML =
+    renderChipPicker({ pluralKey: 'teams',  idPrefix: 'add' }) +
+    renderChipPicker({ pluralKey: 'tribes', idPrefix: 'add' }) +
+    renderChipPicker({ pluralKey: 'squads', idPrefix: 'add' }) +
+    renderChipPicker({ pluralKey: 'tags',   idPrefix: 'add', custom: true });
+}
 
 async function addMember() {
   const inp = document.getElementById('nameInput');
@@ -1058,21 +1115,19 @@ async function addMember() {
   if (!pcts._allSet) { alert('Pick a trait and percentage for each dimension first.'); return; }
   const cleanPcts = { EI: pcts.EI, SN: pcts.SN, TF: pcts.TF, JP: pcts.JP, AT: pcts.AT };
   const identity = cleanPcts.AT < 50 ? 'A' : 'T';
-  const tInp = document.getElementById('teamInput');
-  const trInp = document.getElementById('tribeInput');
-  const sInp = document.getElementById('squadInput');
   const payload = {
     name,
     typeCode: codeFromPcts(cleanPcts),
     pcts: cleanPcts,
     identity,
-    team:  tInp ? tInp.value : '',
-    tribe: trInp ? trInp.value : '',
-    squad: sInp ? sInp.value : ''
+    teams:  getSelectedChips('add-teams'),
+    tribes: getSelectedChips('add-tribes'),
+    squads: getSelectedChips('add-squads'),
+    tags:   getSelectedChips('add-tags')
   };
   try {
     const saved = await apiPost('/api/members', payload);
-    members.push(saved);
+    members.push(normaliseMember(saved));
   } catch (e) {
     alert('Could not save: ' + e.message);
     return;
@@ -1084,16 +1139,17 @@ async function addMember() {
   });
   updateFromInputs();
   inp.value = '';
-  if (tInp) tInp.value = '';
-  if (trInp) trInp.value = '';
-  if (sInp) sInp.value = '';
+  // Re-render the chip groups to clear selections + surface any newly-added tags as chips
+  renderAddForm();
   inp.focus();
   render();
 }
 
-function uniqTagValues(key) {
+// Returns all distinct values seen across members for a filter key (team/tribe/squad).
+function uniqTagValues(filterKey) {
+  const field = FIELD_FOR[filterKey] || filterKey;
   const set = new Set();
-  members.forEach(m => { if (m && m[key]) set.add(m[key]); });
+  members.forEach(m => (m[field] || []).forEach(v => { if (v) set.add(v); }));
   return Array.from(set).sort((a, b) => a.localeCompare(b));
 }
 
@@ -1142,9 +1198,9 @@ let activeFilters = { team: '', tribe: '', squad: '' };
 let hasChosenSlice = false;
 
 function passesFilter(m) {
-  if (activeFilters.team  && (m.team  || '') !== activeFilters.team)  return false;
-  if (activeFilters.tribe && (m.tribe || '') !== activeFilters.tribe) return false;
-  if (activeFilters.squad && (m.squad || '') !== activeFilters.squad) return false;
+  if (activeFilters.team  && !(m.teams  || []).includes(activeFilters.team))  return false;
+  if (activeFilters.tribe && !(m.tribes || []).includes(activeFilters.tribe)) return false;
+  if (activeFilters.squad && !(m.squads || []).includes(activeFilters.squad)) return false;
   return true;
 }
 
@@ -1158,14 +1214,16 @@ function visibleMembersIndexed() {
 }
 
 // --- Filter-bar selects (top of results): populated with canonical + present values ---
-function populateFilterSelect(selId, key) {
+function populateFilterSelect(selId, filterKey) {
   const sel = document.getElementById(selId);
   if (!sel) return;
-  const current = activeFilters[key];
-  const present = new Set(uniqTagValues(key));
-  TAG_OPTIONS[key].forEach(v => present.add(v));
+  const current = activeFilters[filterKey];
+  const field = FIELD_FOR[filterKey] || filterKey;
+  const present = new Set(uniqTagValues(filterKey));
+  (TAG_OPTIONS[field] || []).forEach(v => present.add(v));
   const opts = Array.from(present).sort((a,b) => a.localeCompare(b));
-  sel.innerHTML = `<option value="">Any ${TAG_LABEL[key].toLowerCase()}</option>` +
+  const label = TAG_LABEL[field].toLowerCase();
+  sel.innerHTML = `<option value="">Any ${label}</option>` +
     opts.map(v => `<option value="${v}"${v === current ? ' selected' : ''}>${v}</option>`).join('');
   sel.classList.toggle('set', !!current);
 }
@@ -1207,9 +1265,9 @@ function renderRoster() {
   }
   const summary = `<div class="prescreen-roster-summary"><strong>${members.length}</strong> ${members.length === 1 ? 'person' : 'people'} added</div>`;
   const chips = members.map((m, i) => {
-    const tagBits = [m.team, m.tribe, m.squad].filter(Boolean).join(' · ');
-    const customTags = (m.tags || []).map(t => `<span class="member-tag-pill">${t}</span>`).join('');
-    const tagHtml = (tagBits ? `<span class="roster-chip-tag">${tagBits}</span>` : '') + customTags;
+    const orgBits = [...(m.teams||[]), ...(m.tribes||[]), ...(m.squads||[])].join(' · ');
+    const customTags = (m.tags || []).map(t => `<span class="member-tag-pill">${escText(t)}</span>`).join('');
+    const tagHtml = (orgBits ? `<span class="roster-chip-tag">${escText(orgBits)}</span>` : '') + customTags;
     const id = m.identity ? `-${m.identity}` : '';
     return `<span class="roster-chip">
       ${m.name}
@@ -1584,7 +1642,6 @@ function renderMemberEdit() {
   const panel = document.getElementById('memberDetailPanel');
   if (editingMember === null || !members[editingMember]) { cancelEdit(); return; }
   const m = members[editingMember];
-  const tags = m.tags || [];
 
   const dims = [
     { key: 'EI', label: 'Energy', sides: ['E','I'], names: ['Extraverted','Introverted'] },
@@ -1609,34 +1666,21 @@ function renderMemberEdit() {
     </div>`;
   }).join('') : '';
 
-  const teamOpts = ['', 'Product', 'Engineering', 'QA', 'Design'];
-  const tribeOpts = ['', 'Onboarding', 'Entertainment', 'Platform', 'PQ'];
-  const squadOpts = ['', 'Acquisition', 'P&V', 'C&R', 'Goosicorn', 'Platform', 'PQ'];
-  const opt = (opts, cur) => opts.map(o => `<option value="${o}" ${o === cur ? 'selected' : ''}>${o || '\u2014'}</option>`).join('');
-
-  const tagPillsHtml = tags.map(t =>
-    `<span class="tag-pill">${t}<span class="tag-pill-remove" onclick="this.parentElement.remove()">\u00d7</span></span>`
-  ).join('');
+  const chips =
+    renderChipPicker({ pluralKey: 'teams',  idPrefix: 'edit', selected: m.teams  || [] }) +
+    renderChipPicker({ pluralKey: 'tribes', idPrefix: 'edit', selected: m.tribes || [] }) +
+    renderChipPicker({ pluralKey: 'squads', idPrefix: 'edit', selected: m.squads || [] }) +
+    renderChipPicker({ pluralKey: 'tags',   idPrefix: 'edit', selected: m.tags   || [], custom: true });
 
   panel.classList.add('visible');
   panel.innerHTML = `
     <div class="member-detail-header">
-      <div class="member-detail-name"><h2>Edit ${m.name}</h2></div>
+      <div class="member-detail-name"><h2>Edit ${escText(m.name)}</h2></div>
       <button class="detail-close" onclick="cancelEdit()">\u00d7</button>
     </div>
     <div class="member-edit-form">
-      <div class="edit-field"><label>Name</label><input type="text" id="editName" value="${m.name}"></div>
-      <div class="edit-field"><label>Team</label><select id="editTeam">${opt(teamOpts, m.team)}</select></div>
-      <div class="edit-field"><label>Tribe</label><select id="editTribe">${opt(tribeOpts, m.tribe)}</select></div>
-      <div class="edit-field"><label>Squad</label><select id="editSquad">${opt(squadOpts, m.squad)}</select></div>
-      <div class="edit-tag-section">
-        <label>Tags</label>
-        <div class="tag-pills" id="editTagPills">${tagPillsHtml}</div>
-        <div class="tag-add-row">
-          <input type="text" class="tag-add-input" id="editTagInput" placeholder="Type a tag and press Enter" onkeydown="if(event.key==='Enter'){event.preventDefault();editAddTag();}">
-          <button class="tag-add-btn" onclick="editAddTag()">Add</button>
-        </div>
-      </div>
+      <div class="edit-field"><label>Name</label><input type="text" id="editName" value="${escAttr(m.name)}"></div>
+      ${chips}
       ${pctRows ? `<div class="edit-pct-section"><h4>Personality</h4>${pctRows}</div>` : ''}
       <div class="edit-actions">
         <button class="btn-save" onclick="saveEdit()">Save</button>
@@ -1653,22 +1697,6 @@ function editToggleDim(btn) {
   btn.classList.add('active');
 }
 
-function editAddTag() {
-  const inp = document.getElementById('editTagInput');
-  const tag = inp.value.trim();
-  if (!tag) return;
-  const pills = document.getElementById('editTagPills');
-  pills.insertAdjacentHTML('beforeend',
-    `<span class="tag-pill">${tag}<span class="tag-pill-remove" onclick="this.parentElement.remove()">\u00d7</span></span>`
-  );
-  inp.value = '';
-  inp.focus();
-}
-
-function getEditTags() {
-  return Array.from(document.querySelectorAll('#editTagPills .tag-pill')).map(p => p.firstChild.textContent.trim());
-}
-
 async function saveEdit() {
   if (editingMember === null) return;
   const m = members[editingMember];
@@ -1677,10 +1705,10 @@ async function saveEdit() {
 
   const payload = {
     name,
-    team:  document.getElementById('editTeam').value,
-    tribe: document.getElementById('editTribe').value,
-    squad: document.getElementById('editSquad').value,
-    tags:  getEditTags()
+    teams:  getSelectedChips('edit-teams'),
+    tribes: getSelectedChips('edit-tribes'),
+    squads: getSelectedChips('edit-squads'),
+    tags:   getSelectedChips('edit-tags')
   };
 
   if (m.pcts) {
@@ -1701,7 +1729,7 @@ async function saveEdit() {
 
   try {
     const updated = await apiPut('/api/members/' + m.id, payload);
-    members[editingMember] = updated;
+    members[editingMember] = normaliseMember(updated);
   } catch (e) {
     alert('Could not save: ' + e.message);
     return;
@@ -2575,12 +2603,15 @@ function renderCheatsheet() {
 
   const scopePicker = `<div class="cs-scope">
     <span class="cs-scope-label">Viewing:</span>
-    ${['team','tribe','squad'].map(k => `
-      <select onchange="onFilterChange('${k}', this.value); renderCheatsheet(); updateUrlForView();">
-        <option value="">All ${TAG_LABEL[k].toLowerCase()}s</option>
-        ${TAG_OPTIONS[k].map(v => `<option value="${v}" ${activeFilters[k]===v?'selected':''}>${v}</option>`).join('')}
-      </select>
-    `).join('')}
+    ${['team','tribe','squad'].map(k => {
+      const field = FIELD_FOR[k];
+      const opts = new Set(TAG_OPTIONS[field] || []);
+      uniqTagValues(k).forEach(v => opts.add(v));
+      return `<select onchange="onFilterChange('${k}', this.value); renderCheatsheet(); updateUrlForView();">
+        <option value="">All ${TAG_LABEL[field].toLowerCase()}s</option>
+        ${Array.from(opts).sort((a,b)=>a.localeCompare(b)).map(v => `<option value="${escAttr(v)}" ${activeFilters[k]===v?'selected':''}>${escText(v)}</option>`).join('')}
+      </select>`;
+    }).join('')}
     <span class="cs-scope-count">${list.length} ${list.length===1?'person':'people'}</span>
   </div>`;
 
@@ -2637,12 +2668,14 @@ async function bootstrap() {
   }
 
   try {
-    members = await apiGet('/api/members');
+    members = (await apiGet('/api/members')).map(normaliseMember);
   } catch (e) {
     console.error('Failed to load members:', e);
     alert('Could not load the team from the server. Check your connection and refresh.');
     return;
   }
+
+  renderAddForm();
 
   // Apply URL parameters
   const params = new URLSearchParams(window.location.search);

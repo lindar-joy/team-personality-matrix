@@ -24,11 +24,30 @@ const DB_PATH = path.join(DATA_DIR, 'members.json');
 let members = [];
 let nextId = 1;
 
+// Normalise a member to the array-shape: teams/tribes/squads/tags are all arrays.
+// Accepts legacy single-value team/tribe/squad strings and promotes them.
+function normaliseMember(m) {
+  const toArr = (plural, single) => {
+    if (Array.isArray(m[plural])) return m[plural].filter(Boolean);
+    if (m[single]) return [m[single]];
+    return [];
+  };
+  return {
+    ...m,
+    teams:  toArr('teams',  'team'),
+    tribes: toArr('tribes', 'tribe'),
+    squads: toArr('squads', 'squad'),
+    tags:   Array.isArray(m.tags) ? m.tags : [],
+    // Drop legacy singles — clients read arrays now.
+    team: undefined, tribe: undefined, squad: undefined
+  };
+}
+
 function load() {
   if (!fs.existsSync(DB_PATH)) return;
   try {
     const parsed = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
-    members = parsed.members || [];
+    members = (parsed.members || []).map(normaliseMember);
     nextId = parsed.nextId || (members.reduce((m, x) => Math.max(m, x.id || 0), 0) + 1);
   } catch (e) {
     console.error('[matrix] failed to load db, starting fresh:', e.message);
@@ -69,7 +88,7 @@ if (members.length === 0) {
     { name: 'Martin',    typeCode: 'ENFJ', identity: 'T', pcts: { EI: 48, SN: 66, TF: 71, JP: 26, AT: 58 }, team: 'Engineering', tribe: '', squad: '' },
     { name: 'Ivano',     typeCode: 'ENTJ', identity: 'A', pcts: { EI: 26, SN: 85, TF: 36, JP: 11, AT: 31 }, team: 'Engineering', tribe: '', squad: '' }
   ];
-  members = seed.map(m => ({ id: nextId++, ...m }));
+  members = seed.map(m => normaliseMember({ id: nextId++, ...m }));
   save();
   console.log(`[matrix] seeded ${seed.length} members`);
 }
@@ -153,17 +172,17 @@ app.post('/api/members', async (req, res) => {
     return res.status(400).json({ error: 'missing fields: name, typeCode, pcts' });
   }
   const identity = b.identity || (b.pcts.AT < 50 ? 'A' : 'T');
-  const member = {
+  const member = normaliseMember({
     id: nextId++,
     name: b.name,
     typeCode: b.typeCode,
     identity,
     pcts: { EI: b.pcts.EI, SN: b.pcts.SN, TF: b.pcts.TF, JP: b.pcts.JP, AT: b.pcts.AT },
-    team:  b.team  || '',
-    tribe: b.tribe || '',
-    squad: b.squad || '',
-    tags:  Array.isArray(b.tags) ? b.tags : []
-  };
+    teams:  b.teams  ?? (b.team  ? [b.team]  : []),
+    tribes: b.tribes ?? (b.tribe ? [b.tribe] : []),
+    squads: b.squads ?? (b.squad ? [b.squad] : []),
+    tags:   Array.isArray(b.tags) ? b.tags : []
+  });
   members.push(member);
   await save();
   res.status(201).json(member);
@@ -174,17 +193,17 @@ app.put('/api/members/:id', async (req, res) => {
   const hit = findById(id);
   if (!hit) return res.status(404).json({ error: 'not found' });
   const b = req.body || {};
-  const merged = {
+  const merged = normaliseMember({
     ...hit.member,
     name:     b.name     ?? hit.member.name,
     typeCode: b.typeCode ?? hit.member.typeCode,
     identity: b.identity ?? hit.member.identity,
     pcts:     b.pcts     ?? hit.member.pcts,
-    team:     b.team     ?? hit.member.team,
-    tribe:    b.tribe    ?? hit.member.tribe,
-    squad:    b.squad    ?? hit.member.squad,
-    tags:     b.tags     ?? hit.member.tags ?? []
-  };
+    teams:    b.teams    ?? hit.member.teams,
+    tribes:   b.tribes   ?? hit.member.tribes,
+    squads:   b.squads   ?? hit.member.squads,
+    tags:     b.tags     ?? hit.member.tags
+  });
   members[hit.idx] = merged;
   await save();
   res.json(merged);
@@ -202,14 +221,16 @@ app.delete('/api/members/:id', async (req, res) => {
 // Bulk replace (for import/migration)
 app.post('/api/members/bulk', async (req, res) => {
   if (!Array.isArray(req.body)) return res.status(400).json({ error: 'expected array' });
-  members = req.body.map(m => ({
+  members = req.body.map(m => normaliseMember({
     id: m.id || nextId++,
     name: m.name,
     typeCode: m.typeCode,
     identity: m.identity || (m.pcts?.AT < 50 ? 'A' : 'T'),
     pcts: m.pcts,
-    team: m.team || '', tribe: m.tribe || '', squad: m.squad || '',
-    tags: Array.isArray(m.tags) ? m.tags : []
+    teams:  m.teams  ?? (m.team  ? [m.team]  : []),
+    tribes: m.tribes ?? (m.tribe ? [m.tribe] : []),
+    squads: m.squads ?? (m.squad ? [m.squad] : []),
+    tags:   m.tags
   }));
   nextId = Math.max(nextId, members.reduce((m, x) => Math.max(m, x.id), 0) + 1);
   await save();
