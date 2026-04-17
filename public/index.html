@@ -2610,7 +2610,7 @@ function scopeLabel() {
 
 function renderCheatsheet() {
   const host = document.getElementById('cheatsheetContainer');
-  const list = visibleMembers();
+  const list = visibleMembers().slice().sort((a, b) => (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' }));
   const scope = scopeLabel();
 
   const scopePicker = `<div class="cs-scope">
