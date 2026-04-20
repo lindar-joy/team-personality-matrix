@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MrQ Team Personality Map</title>
+<title>The Qrew, Decoded — MrQ</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -78,8 +78,9 @@
   .edit-actions .btn-cancel:hover { border-color: var(--mrq-blue); color: var(--mrq-blue); }
   .detail-edit { background: none; border: 2px solid #d1d5db; color: #5B6593; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 12px; border-radius: 8px; margin-right: 8px; }
   .detail-edit:hover { border-color: var(--mrq-blue); color: var(--mrq-blue); }
-  .detail-remove { background: none; border: 2px solid #d1d5db; color: #5B6593; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 12px; border-radius: 8px; margin-right: 8px; }
+  .detail-remove { background: none; border: 2px solid #d1d5db; color: #5B6593; cursor: pointer; padding: 4px 8px; border-radius: 8px; margin-right: 8px; display: inline-flex; align-items: center; justify-content: center; line-height: 0; }
   .detail-remove:hover { border-color: #dc2626; color: #dc2626; }
+  .detail-remove svg { width: 16px; height: 16px; }
   .member-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
   .member-tag-pill { display: inline-flex; font-size: 10px; font-weight: 600; color: #0B2595; background: #E8ECFC; padding: 2px 8px; border-radius: 999px; }
 
@@ -354,6 +355,38 @@
   .personality-cell:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(10, 46, 203, 0.1); }
   .personality-cell.has-members { border-color: var(--mrq-blue); }
   .personality-cell.selected { border-color: var(--mrq-yellow); box-shadow: 0 0 0 3px rgba(255, 223, 0, 0.3); transform: translateY(-2px); }
+  .cell-role {
+    position: absolute; top: 6px; left: 8px;
+    font-size: 8px; font-weight: 800; letter-spacing: 0.7px; text-transform: uppercase;
+    opacity: 0.75;
+  }
+  .role-analyst  .cell-role { color: #b13ab0; }
+  .role-diplomat .cell-role { color: #1f9a5a; }
+  .role-sentinel .cell-role { color: #0082b8; }
+  .role-explorer .cell-role { color: #9a7a00; }
+
+  /* ---------- The Types page ---------- */
+  .types-wrapper { max-width: 1120px; margin: 0 auto; padding: 0 4px; }
+  .types-intro { text-align: center; color: #5B6593; font-size: 13px; font-weight: 500; margin: 0 0 24px; max-width: 640px; margin-left: auto; margin-right: auto; }
+  .group-block { background: white; border-radius: 20px; padding: 24px 24px 20px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(10,46,203,0.06); border-left: 6px solid; }
+  .group-block.analysts  { border-left-color: #FF63F6; }
+  .group-block.diplomats { border-left-color: #42D486; }
+  .group-block.sentinels { border-left-color: #00B2FF; }
+  .group-block.explorers { border-left-color: #FFDF00; }
+  .group-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+  .group-head h2 { font-size: 20px; font-weight: 800; margin: 0; letter-spacing: -0.01em; color: var(--ink); text-transform: uppercase; }
+  .group-head .group-letters { font-size: 12px; font-weight: 700; color: #9ca3af; letter-spacing: 0.1em; }
+  .group-overview { margin: 0 0 18px; font-size: 14px; color: #5B6593; line-height: 1.5; }
+  .types-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+  .type-card { background: #F4F6FF; border-radius: 12px; padding: 12px 14px; border-left: 3px solid transparent; }
+  .group-block.analysts  .type-card { border-left-color: #FF63F6; }
+  .group-block.diplomats .type-card { border-left-color: #42D486; }
+  .group-block.sentinels .type-card { border-left-color: #00B2FF; }
+  .group-block.explorers .type-card { border-left-color: #FFDF00; }
+  .type-card-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .type-card-code { font-size: 14px; font-weight: 800; color: var(--mrq-blue); letter-spacing: 0.3px; }
+  .type-card-name { font-size: 11px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; }
+  .type-card-line { font-size: 13px; color: var(--ink); line-height: 1.4; margin: 0; }
   .cell-type { font-size: 17px; font-weight: 800; color: var(--mrq-blue); letter-spacing: 0.5px; margin-bottom: 1px; }
   .cell-name { font-size: 9px; font-weight: 600; color: #b0b8c8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
   .cell-members { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; flex: 1; align-content: flex-start; }
@@ -557,7 +590,10 @@
   .spectrum-empty { text-align: center; color: #9ca3af; font-size: 13px; font-weight: 500; padding: 20px 0; }
 
   /* Read-Out view */
-  .readout-wrapper { max-width: 1000px; margin: 24px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .dynamics-intro { max-width: 1000px; margin: 24px auto 0; text-align: center; }
+  .dynamics-intro h2 { font-size: 22px; font-weight: 800; color: var(--mrq-blue); letter-spacing: -0.3px; margin: 0 0 6px; }
+  .dynamics-intro p { font-size: 14px; font-weight: 500; color: #5B6593; margin: 0 auto; max-width: 620px; line-height: 1.5; }
+  .readout-wrapper { max-width: 1000px; margin: 18px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .readout-card { background: white; border-radius: 14px; padding: 20px 22px; box-shadow: 0 2px 12px rgba(10,46,203,0.05); }
   .readout-card.full { grid-column: 1 / -1; }
   .readout-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #9ca3af; margin-bottom: 10px; }
@@ -711,7 +747,7 @@
   .cs-section-head { display: flex; align-items: baseline; justify-content: space-between; margin: 28px 4px 16px; }
   .cs-section-head h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; margin: 0; color: #0B2595; }
   .cs-section-head .sub { color: #5B6593; font-size: 13px; }
-  .cs-profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .cs-profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 16px; }
   .cs-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(10,46,203,0.08); display: flex; flex-direction: column; gap: 12px; }
   .cs-card-head { display: flex; align-items: flex-start; gap: 12px; justify-content: space-between; }
   .cs-card-name { font-size: 18px; font-weight: 800; margin: 0; line-height: 1.15; color: #0B2595; }
@@ -728,6 +764,10 @@
   .cs-block p { margin: 0; }
   .cs-block ul { margin: 0; padding-left: 16px; list-style: disc; }
   .cs-block ul li { margin: 2px 0; }
+  .cs-borderline { background: #FFF8DB; border-left: 3px solid #FFDF00; border-radius: 8px; padding: 10px 12px; }
+  .cs-borderline h4 { color: #8a6b00; }
+  .cs-borderline p { color: #4a3900; }
+  .cs-borderline b { color: #0B2595; }
   .cs-empty { text-align: center; color: #5B6593; padding: 60px 20px; background: white; border-radius: 20px; }
   .cs-empty h2 { margin: 0 0 8px; color: #0B2595; font-size: 22px; }
 
@@ -747,12 +787,12 @@
 </div>
 
 <div class="header">
-  <h1>MrQ Team Personality Map</h1>
-  <p>Who are we actually working with? Let's find out.</p>
+  <h1>The Qrew, Decoded</h1>
+  <p>Find out what drives, inspires and worries every personality type, so you can click with the Qrew from day one.</p>
 </div>
 
 <!-- View toggle: Matrix (edit) vs Cheat Sheet (share) -->
-<div class="view-toggle" id="viewToggle">
+<div class="view-toggle" id="viewToggle" style="display:none;">
   <button class="view-btn active" data-view="matrix"     onclick="setView('matrix')">Explore</button>
   <button class="view-btn"        data-view="cheatsheet" onclick="setView('cheatsheet')">Cheat Sheet</button>
   <button class="view-share" id="shareBtn" onclick="copyShareLink()" style="display:none;">Copy share link</button>
@@ -765,19 +805,19 @@
 <div id="prescreenContainer">
   <div class="prescreen prescreen-data">
     <div class="prescreen-actions" style="margin-top:0;margin-bottom:18px;">
-      <button class="prescreen-btn" onclick="enterResults(true)">See the team &rarr;</button>
+      <button class="prescreen-btn" onclick="enterResults(true)">Show me the Qrew &rarr;</button>
     </div>
-    <h2>Drop your team in</h2>
-    <p class="lead">Add yourself and your colleagues. When you're ready, jump to the team views — you can come back and add more anytime.</p>
+    <h2>Add yourself</h2>
+    <p class="lead">Drop yourself in. Come back and tweak whenever.</p>
 
     <a class="test-link" href="https://www.16personalities.com/free-personality-test" target="_blank" rel="noopener noreferrer">
-      Don't know your type? Take the free test <span class="test-link-arrow">&rarr;</span>
+      Not sure what you are? Take the test <span class="test-link-arrow">&rarr;</span>
     </a>
 
 <!-- Add form lives inside the pre-screen now -->
 <div class="add-form">
   <div class="add-row" style="margin-bottom:8px;">
-    <input type="text" id="nameInput" placeholder="Who's joining?" />
+    <input type="text" id="nameInput" placeholder="Your name (or a teammate's)" />
   </div>
   <div id="addChipGroups"></div>
   <div>
@@ -825,7 +865,7 @@
       </div>
     </div>
     <div class="auto-type" id="autoType">????-?<span>Pick the traits to see the type</span></div>
-    <button class="btn" onclick="addMember()" style="width:100%;margin-top:12px;padding:11px 18px;font-size:14px;border-radius:10px;">Drop them in</button>
+    <button class="btn" onclick="addMember()" style="width:100%;margin-top:12px;padding:11px 18px;font-size:14px;border-radius:10px;">Add to the Qrew</button>
   </div>
 </div>
 <!-- /add-form -->
@@ -856,16 +896,15 @@
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('map')">The Map</button>
   <button class="tab-btn" onclick="switchTab('spectrum')">The Spectrum</button>
-  <button class="tab-btn" onclick="switchTab('readout')">The Read-Out</button>
-  <button class="tab-btn" onclick="switchTab('situations')">Situations</button>
+  <button class="tab-btn" onclick="switchTab('readout')">Team Dynamics</button>
   <button class="tab-btn" onclick="switchTab('compare')">Head to Head</button>
 </div>
 
 <div class="tab-panel active" id="tab-map">
   <div class="matrix-wrapper">
     <div class="top-axis">
-      <div class="top-axis-half sensing">Sensing<span>Practical &amp; detail-oriented</span></div>
-      <div class="top-axis-half intuition">Intuition<span>Big-picture &amp; abstract</span></div>
+      <div class="top-axis-half sensing">Sensing<span>Concrete &amp; detail-focused</span></div>
+      <div class="top-axis-half intuition">Intuition<span>Imaginative &amp; big-picture</span></div>
     </div>
     <div class="sub-axis">
       <div class="sub-axis-cell">Thinking</div>
@@ -875,8 +914,8 @@
     </div>
     <div class="grid-area">
       <div class="left-axis">
-        <div class="left-axis-half extravert">Extravert<span>&nbsp; Outward energy</span></div>
-        <div class="left-axis-half introvert">Introvert<span>&nbsp; Inward energy</span></div>
+        <div class="left-axis-half extravert">Extraverted<span>&nbsp; Outward energy</span></div>
+        <div class="left-axis-half introvert">Introverted<span>&nbsp; Inward energy</span></div>
       </div>
       <div class="personality-grid" id="grid"></div>
     </div>
@@ -885,7 +924,7 @@
   <div class="detail-panel" id="detailPanel"></div>
   <div class="dimension-breakdown" id="dimensions"></div>
   <div class="dim-insight" id="dimInsight"></div>
-  <div class="team-insights" id="teamInsights"></div>
+  <div class="types-wrapper" id="typesWrapper"></div>
 </div>
 
 <div class="tab-panel" id="tab-spectrum">
@@ -897,12 +936,15 @@
 </div>
 
 <div class="tab-panel" id="tab-readout">
+  <div class="dynamics-intro">
+    <h2>Team dynamics</h2>
+    <p>How this team tends to think, decide, where the sparks fly, and the blind spots worth watching.</p>
+  </div>
   <div class="readout-wrapper" id="readoutContent"></div>
-  <div class="readout-empty" id="readoutEmpty" style="display:none;">Add a few people first and we'll tell you what this team is actually made of.</div>
-</div>
+  <div class="readout-empty" id="readoutEmpty" style="display:none;">Add a few people first and we'll tell you how this team actually works together.</div>
 
-<div class="tab-panel" id="tab-situations">
   <div class="situations-wrapper">
+    <h2 style="font-size:15px;font-weight:800;color:#0B2595;letter-spacing:-0.2px;margin:0 0 6px;text-align:center;">How this team handles…</h2>
     <div class="situations-intro">Pick a situation and we'll tell you who leans in, who needs a run-up, and what to do about it.</div>
     <div class="situations-grid" id="situationsGrid"></div>
     <div class="situation-detail" id="situationDetail"></div>
@@ -922,6 +964,7 @@
     <p style="text-align:center;color:#9ca3af;font-size:13px;font-weight:500;padding:20px 0;">Get some people on the map first, then pick two to compare.</p>
   </div>
 </div>
+
 
 <div class="total-badge" id="totalBadge"></div>
 
@@ -1191,17 +1234,88 @@ function save() { /* noop — data lives on the server */ }
 document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') addMember(); });
 
 function switchTab(tab) {
-  const order = ['map', 'spectrum', 'readout', 'situations', 'compare'];
+  // 'situations' collapsed into 'readout' — redirect legacy links
+  if (tab === 'situations') tab = 'readout';
+  // 'types' was collapsed into 'map' — redirect legacy links
+  if (tab === 'types') tab = 'map';
+  const order = ['map', 'spectrum', 'readout', 'compare'];
   document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', order[i] === tab));
   document.getElementById('tab-map').classList.toggle('active', tab === 'map');
   document.getElementById('tab-spectrum').classList.toggle('active', tab === 'spectrum');
   document.getElementById('tab-readout').classList.toggle('active', tab === 'readout');
-  document.getElementById('tab-situations').classList.toggle('active', tab === 'situations');
   document.getElementById('tab-compare').classList.toggle('active', tab === 'compare');
   if (tab === 'compare') populateCompareSelects();
   if (tab === 'spectrum') renderSpectrum();
-  if (tab === 'readout') renderReadOut();
-  if (tab === 'situations') renderSituations();
+  if (tab === 'readout') { renderReadOut(); renderSituations(); }
+}
+
+const ROLE_GROUPS = [
+  {
+    key: 'NT', cls: 'analysts', name: 'Analysts', letters: 'Intuitive · Thinking',
+    overview: 'Rational and impartial. Drawn to strategy, systems, and pulling apart problems until they make sense. Value competence, logic and being left alone to get on with it.',
+    types: ['INTJ', 'INTP', 'ENTJ', 'ENTP'],
+  },
+  {
+    key: 'NF', cls: 'diplomats', name: 'Diplomats', letters: 'Intuitive · Feeling',
+    overview: 'Empathetic and idealistic. Care about meaning, people, and making things a bit better than they found them. Feel the team dynamic before they spot the spreadsheet.',
+    types: ['INFJ', 'INFP', 'ENFJ', 'ENFP'],
+  },
+  {
+    key: 'SJ', cls: 'sentinels', name: 'Sentinels', letters: 'Observant · Judging',
+    overview: 'Cooperative and practical. The backbone of any team — organised, dependable, and quietly making sure nothing falls through the cracks. Trust earned through follow-through.',
+    types: ['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'],
+  },
+  {
+    key: 'SP', cls: 'explorers', name: 'Explorers', letters: 'Observant · Prospecting',
+    overview: 'Spontaneous and resourceful. Masters of the here-and-now — hands-on, adaptable, and brilliant when things go sideways. Live for action over abstraction.',
+    types: ['ISTP', 'ISFP', 'ESTP', 'ESFP'],
+  },
+];
+
+const TYPE_ONELINERS = {
+  INTJ: 'Strategic and independent — thinks in systems and long-term plans.',
+  INTP: 'Analytical and curious — loves pulling a problem apart to see how it works.',
+  ENTJ: 'Decisive and driven — naturally takes charge and pushes for results.',
+  ENTP: 'Inventive and energetic — an idea machine who lives to debate and brainstorm.',
+  INFJ: 'Insightful and purposeful — quiet convictions, cares deeply about meaning.',
+  INFP: 'Creative and empathetic — guided by values and a strong inner compass.',
+  ENFJ: 'Charismatic and supportive — the connector who champions the team.',
+  ENFP: 'Enthusiastic and imaginative — brings warmth, energy and a stream of ideas.',
+  ISTJ: 'Reliable and thorough — gets things done properly and on time, every time.',
+  ISFJ: 'Caring and conscientious — quietly making sure nothing falls through the cracks.',
+  ESTJ: 'Organised and decisive — brings structure, accountability and clear ownership.',
+  ESFJ: 'Warm and organised — the social glue keeping people and plans connected.',
+  ISTP: 'Practical and adaptable — hands-on problem solver, calm under pressure.',
+  ISFP: 'Gentle and creative — quiet care, strong aesthetic, takes pride in craft.',
+  ESTP: 'Bold and pragmatic — action-oriented, thrives in fast-moving situations.',
+  ESFP: 'Fun-loving and people-oriented — brings energy, optimism and a good time.',
+};
+
+function renderTypes() {
+  const host = document.getElementById('typesWrapper');
+  if (!host) return;
+  const intro = `<p class="types-intro">A quick read on the four families of personality type and the sixteen styles that live inside them.</p>`;
+  const blocks = ROLE_GROUPS.map(g => `
+    <div class="group-block ${g.cls}">
+      <div class="group-head">
+        <h2>${g.name}</h2>
+        <span class="group-letters">${g.letters}</span>
+      </div>
+      <p class="group-overview">${g.overview}</p>
+      <div class="types-grid">
+        ${g.types.map(code => `
+          <div class="type-card">
+            <div class="type-card-head">
+              <span class="type-card-code">${code}</span>
+              <span class="type-card-name">${TYPE_NAMES[code] || ''}</span>
+            </div>
+            <p class="type-card-line">${TYPE_ONELINERS[code] || ''}</p>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+  host.innerHTML = intro + blocks;
 }
 
 // --- Filters / slice picker --------------------------------------------------
@@ -1310,11 +1424,13 @@ function backToPrescreen() {
 function renderGate() {
   const pre = document.getElementById('prescreenContainer');
   const res = document.getElementById('resultsContainer');
+  const toggle = document.getElementById('viewToggle');
   if (pre) pre.classList.toggle('hidden', hasChosenSlice);
   if (res) res.classList.toggle('hidden', !hasChosenSlice);
+  if (toggle) toggle.style.display = hasChosenSlice ? 'flex' : 'none';
 }
 
-function render() { renderResultsSlicer(); renderRoster(); renderGrid(); renderMemberDetail(); renderDimensions(); renderDetail(); renderTeamInsights(); renderTotal(); renderSpectrum(); renderReadOut(); renderSituations(); populateCompareSelects(); }
+function render() { renderResultsSlicer(); renderRoster(); renderGrid(); renderMemberDetail(); renderDimensions(); renderDetail(); renderTotal(); renderSpectrum(); renderReadOut(); renderSituations(); populateCompareSelects(); }
 
 // Smart initials for the whole team: short where possible, longer to break ties
 function buildInitialsMap(memberList) {
@@ -1428,15 +1544,25 @@ function fmtPct(val, letters) {
 // Get strength (how far from 50): 50=borderline, 100=max
 function strength(val) { return Math.abs(val - 50) * 2; }
 
+function roleOf(code) {
+  const n = code[1] === 'N';
+  if (n && code[2] === 'T') return { key: 'NT', cls: 'role-analyst', label: 'Analyst' };
+  if (n && code[2] === 'F') return { key: 'NF', cls: 'role-diplomat', label: 'Diplomat' };
+  if (code[3] === 'J')      return { key: 'SJ', cls: 'role-sentinel', label: 'Sentinel' };
+  return { key: 'SP', cls: 'role-explorer', label: 'Explorer' };
+}
+
 function renderGrid() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
+  const vm = visibleMembersIndexed();
   GRID.forEach((row, ri) => {
     row.forEach((type, ci) => {
       const cell = document.createElement('div');
-      const typeMembers = visibleMembersIndexed().map(m => ({ ...m, idx: m._idx })).filter(m => m.typeCode === type.code);
+      const typeMembers = vm.map(m => ({ ...m, idx: m._idx })).filter(m => m.typeCode === type.code);
       const hasMem = typeMembers.length > 0;
-      let cls = 'personality-cell';
+      const role = roleOf(type.code);
+      let cls = 'personality-cell ' + role.cls;
       if (hasMem) cls += ' has-members';
       if (selectedType === type.code) cls += ' selected';
       cell.className = cls;
@@ -1446,6 +1572,7 @@ function renderGrid() {
       cell.style.background = isTop && isLeft ? '#fff8fc' : isTop ? '#f8fffe' : isLeft ? '#fafaff' : '#f6fff9';
 
       cell.innerHTML = `
+        <div class="cell-role">${role.label}</div>
         <div class="cell-type">${type.code}</div>
         <div class="cell-name">${type.name}</div>
         ${hasMem ? `<div class="cell-count">${typeMembers.length}</div>` : ''}
@@ -1611,7 +1738,7 @@ function renderMemberDetail() {
       </div>
       <div style="display:flex;align-items:center;gap:4px;">
         <button class="detail-edit" onclick="editMember(${selectedMember})">Edit</button>
-        <button class="detail-remove" onclick="removeMember(${selectedMember})">Remove</button>
+        <button class="detail-remove" onclick="removeMember(${selectedMember})" title="Remove" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path></svg></button>
         <button class="detail-close" onclick="selectedMember=null;render();">&times;</button>
       </div>
     </div>
@@ -1869,46 +1996,6 @@ function toggleDimInsight(dim, lc, rc, total) {
   panel.classList.add('visible');
 }
 
-function renderTeamInsights() {
-  const container = document.getElementById('teamInsights');
-  const vm = visibleMembers();
-  if (vm.length < 3) { container.innerHTML = ''; return; }
-  const total = vm.length;
-  const count = (letter, pos) => vm.filter(m => m.typeCode[pos] === letter).length;
-  const strengths = [], watches = [];
-  const uniqueTypes = new Set(vm.map(m => m.typeCode)).size;
-  if (uniqueTypes >= Math.min(total, 6)) strengths.push('Your team has strong personality diversity \u2014 you\'ll naturally bring different perspectives to problems. Lean into it.');
-  if (uniqueTypes <= Math.ceil(total / 3) && total > 3) watches.push('Your team clusters in a few personality types. You\'ll agree quickly but might have blind spots. Deliberately assign someone to play devil\'s advocate in key decisions.');
-
-  const iC = count('I', 0), eC = count('E', 0), sC = count('S', 1), nC = count('N', 1);
-  const tC = count('T', 2), fC = count('F', 2), jC = count('J', 3), pC = count('P', 3);
-
-  if (tC > 0 && fC > 0) strengths.push('You have both Thinking and Feeling types \u2014 decisions can be both analytically sound and people-aware.');
-  if (jC > 0 && pC > 0) strengths.push('Mix of Judging and Perceiving means you can plan and adapt.');
-  if (fC === 0 && total > 2) watches.push('No Feeling types. Decisions will be logical but you might miss how changes land emotionally. Pause to ask "how will people feel about this?"');
-  if (tC === 0 && total > 2) watches.push('No Thinking types. Great harmony, but might struggle with tough calls. Assign someone to be the "logic check."');
-  if (iC === 0 && total > 2) watches.push('All extraverts \u2014 high energy but deep focused work might suffer. Build in protected focus time.');
-  if (eC === 0 && total > 2) watches.push('All introverts \u2014 great deep work but might under-communicate. Set up regular check-ins.');
-
-  // Identity insights
-  const aC = vm.filter(m => m.identity === 'A').length;
-  const trbC = vm.filter(m => m.identity === 'T').length;
-  if (aC > 0 && trbC > 0) strengths.push('You have both Assertive and Turbulent types \u2014 a balance of confidence and self-awareness. Assertive members steady the ship under pressure; Turbulent members catch risks and push for improvement.');
-  if (trbC === 0 && aC > 2) watches.push('All Assertive types \u2014 confident and calm, but you may collectively underestimate risks or dismiss concerns too quickly. Build in deliberate risk reviews.');
-  if (aC === 0 && trbC > 2) watches.push('All Turbulent types \u2014 thorough and self-improving, but you may collectively overthink or struggle with confidence on decisions. Celebrate wins and set "good enough" thresholds.');
-
-  // Check for borderline members
-  const borderlineMembers = vm.filter(m => m.pcts && Object.values(m.pcts).some(v => Math.abs(v - 50) < 10));
-  if (borderlineMembers.length > 0) {
-    watches.push(`${borderlineMembers.map(m => m.name).join(', ')} ${borderlineMembers.length === 1 ? 'has' : 'have'} borderline scores on some dimensions \u2014 they may flex between types depending on context. Don't put them in a rigid box.`);
-  }
-
-  if (strengths.length === 0 && watches.length === 0) { container.innerHTML = ''; return; }
-  container.innerHTML =
-    strengths.map(s => `<div class="insight-card strength"><h4>What's Working</h4><p>${s}</p></div>`).join('') +
-    watches.map(w => `<div class="insight-card watch"><h4>Heads Up</h4><p>${w}</p></div>`).join('');
-}
-
 // ============ The Read-Out ============
 function renderReadOut() {
   const host = document.getElementById('readoutContent');
@@ -1965,7 +2052,7 @@ function renderReadOut() {
         const loPct = lo.pcts[d.key] < 50 ? 100 - lo.pcts[d.key] : lo.pcts[d.key];
         const hiSide = hi.pcts[d.key] < 50 ? d.left : d.right;
         const hiPct = hi.pcts[d.key] < 50 ? 100 - hi.pcts[d.key] : hi.pcts[d.key];
-        gaps.push({ label: d.label, lo: lo.name, loSide, loPct, hi: hi.name, hiSide, hiPct, gap });
+        gaps.push({ label: d.label, loSide, loPct, hiSide, hiPct, gap });
       }
     });
     gaps.sort((a,b) => b.gap - a.gap);
@@ -2000,25 +2087,11 @@ function renderReadOut() {
 
   if (obs.length === 0) obs.push({ tone: 'good', text: `Well-balanced team — no extreme skews jumping out of the numbers.` });
 
-  // Extreme individuals
-  const extremes = [];
-  if (withPcts.length >= 3) {
-    dims.forEach(d => {
-      const sorted = [...withPcts].sort((a,b) => Math.abs(b.pcts[d.key]-50) - Math.abs(a.pcts[d.key]-50));
-      const strongest = sorted[0];
-      if (Math.abs(strongest.pcts[d.key] - 50) >= 35) {
-        const side = strongest.pcts[d.key] < 50 ? d.left : d.right;
-        const pct = strongest.pcts[d.key] < 50 ? 100 - strongest.pcts[d.key] : strongest.pcts[d.key];
-        extremes.push({ label: d.label, name: strongest.name, side, pct });
-      }
-    });
-  }
-
   host.innerHTML = `
     <div class="readout-card">
-      <div class="readout-title">Shape of the room</div>
+      <div class="readout-title">Shape of the team</div>
       <div class="readout-headline">${total} ${total !== 1 ? 'people' : 'person'}, ${Object.keys(typeCounts).length} ${Object.keys(typeCounts).length !== 1 ? 'types' : 'type'}</div>
-      <div class="readout-sub" style="margin-bottom:14px;">Centre of gravity: <strong style="color:#0B2595;">${dominantType[0]} (${typeName})</strong> &mdash; ${dominantType[1]} of ${total}.</div>
+      <div class="readout-sub" style="margin-bottom:14px;">Most common type: <strong style="color:#0B2595;">${dominantType[0]} (${typeName})</strong> &mdash; ${dominantType[1]} of ${total}.</div>
       <div class="readout-quadrants">
         <div class="readout-quadrant analysts"><span class="readout-quadrant-count">${analysts}</span>Analysts</div>
         <div class="readout-quadrant diplomats"><span class="readout-quadrant-count">${diplomats}</span>Diplomats</div>
@@ -2028,8 +2101,8 @@ function renderReadOut() {
     </div>
 
     <div class="readout-card">
-      <div class="readout-title">Team centre of gravity</div>
-      <div class="readout-sub" style="margin-bottom:10px;">Where the team's average sits on each dimension.</div>
+      <div class="readout-title">How this team leans</div>
+      <div class="readout-sub" style="margin-bottom:10px;">Where the team's instincts sit on each dimension — the default mode in the room.</div>
       ${dims.map(d => {
         if (avgs[d.key] === undefined) return '';
         const side = avgs[d.key] < 50 ? d.left : d.right;
@@ -2040,32 +2113,23 @@ function renderReadOut() {
 
     ${gaps.length > 0 ? `
     <div class="readout-card full">
-      <div class="readout-title">Where you're furthest apart</div>
-      <div class="readout-sub" style="margin-bottom:10px;">The biggest internal gulfs. Expect friction here &mdash; and useful perspective.</div>
+      <div class="readout-title">Where sparks fly</div>
+      <div class="readout-sub" style="margin-bottom:10px;">The widest gulfs on each dimension. Expect friction here &mdash; and useful perspective if you lean into it.</div>
       ${gaps.slice(0, 4).map(g => `
         <div class="readout-pair">
-          <div class="readout-pair-label">${g.label}</div>
+          <div class="readout-pair-label">${g.label} <span style="color:#9ca3af;font-weight:600;">· ${g.gap}% span</span></div>
           <div class="readout-pair-ends">
-            <div class="readout-pair-person">${g.lo}<span class="pct">${g.loSide} ${g.loPct}%</span></div>
-            <div class="readout-pair-person" style="text-align:right;">${g.hi}<span class="pct">${g.hiSide} ${g.hiPct}%</span></div>
+            <div class="readout-pair-person">${g.loSide}<span class="pct">${g.loPct}%</span></div>
+            <div class="readout-pair-person" style="text-align:right;">${g.hiSide}<span class="pct">${g.hiPct}%</span></div>
           </div>
         </div>
       `).join('')}
     </div>
     ` : ''}
 
-    ${extremes.length > 0 ? `
     <div class="readout-card full">
-      <div class="readout-title">The outliers</div>
-      <div class="readout-sub" style="margin-bottom:10px;">People sitting at the far end of a scale. Their perspective will be distinctively theirs.</div>
-      <ul class="readout-list">
-        ${extremes.map(e => `<li><span><strong>${e.name}</strong> on ${e.label.toLowerCase()} &mdash; ${e.side} ${e.pct}%.</span></li>`).join('')}
-      </ul>
-    </div>
-    ` : ''}
-
-    <div class="readout-card full">
-      <div class="readout-title">What this team is made of</div>
+      <div class="readout-title">How this team works together</div>
+      <div class="readout-sub" style="margin-bottom:10px;">Strengths, tendencies and blind spots that'll show up in the day-to-day.</div>
       <ul class="readout-list">
         ${obs.map(o => `<li class="${o.tone}"><span>${o.text}</span></li>`).join('')}
       </ul>
@@ -2463,11 +2527,14 @@ function setView(view, opts = {}) {
   const res = document.getElementById('resultsContainer');
   const shareBtn = document.getElementById('shareBtn');
 
+  const toggle = document.getElementById('viewToggle');
+
   if (currentView === 'cheatsheet') {
     cs.classList.remove('hidden');
     if (pre) pre.classList.add('hidden');
     if (res) res.classList.add('hidden');
     if (shareBtn) shareBtn.style.display = 'inline-block';
+    if (toggle) toggle.style.display = 'flex';
     renderCheatsheet();
   } else {
     cs.classList.add('hidden');
@@ -2573,6 +2640,30 @@ function csBarRow(leftLabel, rightLabel, pctVal) {
   return `<div class="cs-bar"><span class="left">${leftLabel}</span><div class="track"><div class="dot" style="left: ${pctVal}%"></div></div><span class="right">${rightLabel}</span></div>`;
 }
 
+const BORDERLINE_DIMS = {
+  EI: { label: 'Energy',   left: 'Extraverted', right: 'Introverted', flex: 'may act more outgoing in some settings and more reserved in others' },
+  SN: { label: 'Mind',     left: 'Observant',   right: 'Intuitive',   flex: 'can flex between practical, detail-focused thinking and big-picture thinking' },
+  TF: { label: 'Nature',   left: 'Thinking',    right: 'Feeling',     flex: 'weighs logic and people-impact about evenly — the call can swing either way' },
+  JP: { label: 'Tactics',  left: 'Judging',     right: 'Prospecting', flex: 'sometimes wants a locked-down plan, other times happy to keep options open' },
+  AT: { label: 'Identity', left: 'Assertive',   right: 'Turbulent',   flex: 'can read confident one day and self-critical the next' },
+};
+
+function borderlineBlockFor(p) {
+  if (!p) return '';
+  const keys = Object.keys(BORDERLINE_DIMS).filter(k => typeof p[k] === 'number' && Math.abs(p[k] - 50) < 10);
+  if (keys.length === 0) return '';
+  const items = keys.map(k => {
+    const d = BORDERLINE_DIMS[k];
+    return `<li><b>${d.label}</b> (${d.left} / ${d.right}) — ${d.flex}.</li>`;
+  }).join('');
+  const plural = keys.length > 1;
+  return `<div class="cs-block cs-borderline">
+    <h4>Heads up — close to the middle</h4>
+    <p>Sitting near 50/50 on ${plural ? 'these dimensions' : 'this dimension'}, which means they may flex between styles depending on context. Don't box them into one read.</p>
+    <ul>${items}</ul>
+  </div>`;
+}
+
 function csRenderMember(m) {
   const code = m.typeCode;
   const data = CS_TYPE_DATA[code] || { style: '', comms: [], needs: '', stresses: '' };
@@ -2593,6 +2684,7 @@ function csRenderMember(m) {
       <span class="cs-badge">${code}-${m.identity}</span>
     </header>
     <div class="cs-bars">${bars}</div>
+    ${borderlineBlockFor(p)}
     <div class="cs-block"><h4>Their style</h4><p>${data.style}</p></div>
     <div class="cs-block"><h4>How they like to communicate</h4><ul>${data.comms.map(c => `<li>${c}</li>`).join('')}</ul></div>
     <div class="cs-block"><h4>What they need</h4><p>${data.needs}</p></div>
@@ -2667,12 +2759,15 @@ async function bootstrap() {
     if (r.status === 401) { window.location.href = '/login'; return; }
     if (!r.ok) throw new Error('auth check failed: ' + r.status);
     const me = await r.json();
-    const bar = document.getElementById('userBar');
-    const avatar = document.getElementById('userAvatar');
-    const nameEl = document.getElementById('userName');
-    if (me.picture) avatar.src = me.picture;
-    nameEl.textContent = me.name || me.email || 'Signed in';
-    bar.hidden = false;
+    // Local dev without Auth0 → skip the user bar entirely
+    if (!me.anonymous) {
+      const bar = document.getElementById('userBar');
+      const avatar = document.getElementById('userAvatar');
+      const nameEl = document.getElementById('userName');
+      if (me.picture) avatar.src = me.picture;
+      nameEl.textContent = me.name || me.email || 'Signed in';
+      bar.hidden = false;
+    }
   } catch (e) {
     console.error('Auth check failed:', e);
     alert('Could not verify your session. Refresh to try again.');
@@ -2705,6 +2800,7 @@ async function bootstrap() {
     renderRoster();
     render();
   }
+  renderTypes();
 }
 
 bootstrap();

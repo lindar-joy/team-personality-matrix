@@ -110,59 +110,62 @@ app.use((req, _res, next) => {
 });
 
 // ---------------------------------------------------------------------------
-// Auth0 (OIDC). Registers /login, /logout, /callback automatically.
-// Required env vars: AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, BASE_URL.
-// The session-cookie secret is derived from AUTH0_CLIENT_SECRET via HMAC with
-// a domain-separating label, so it's stable across restarts without needing
-// its own env var. Bump SESSION_SECRET_VERSION to force-invalidate all sessions.
+// Auth0 (OIDC). Enabled only when all required env vars are set.
+// In local dev, leave them unset and the app runs open (no login, no user bar).
+// In prod (Railway), all four are set and auth gates every non-health route.
+//
+// Required: AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, BASE_URL.
+// Session-cookie secret is derived from AUTH0_CLIENT_SECRET via HMAC with a
+// domain-separating label — stable across restarts, no extra env var.
+// Bump SESSION_SECRET_VERSION to force-invalidate all sessions.
 // ---------------------------------------------------------------------------
-for (const key of ['AUTH0_DOMAIN', 'AUTH0_CLIENT_ID', 'AUTH0_CLIENT_SECRET', 'BASE_URL']) {
-  if (!process.env[key]) {
-    console.error(`[matrix] missing required env var: ${key}`);
-    process.exit(1);
-  }
-}
-
-const SESSION_SECRET_VERSION = 'v1';
-const sessionSecret = crypto
-  .createHmac('sha256', process.env.AUTH0_CLIENT_SECRET)
-  .update(`matrix-app:session-cookie:${SESSION_SECRET_VERSION}`)
-  .digest('hex');
-
-app.use(auth({
-  authRequired: false,       // gated per-route below
-  auth0Logout: true,
-  baseURL:       process.env.BASE_URL,
-  clientID:      process.env.AUTH0_CLIENT_ID,
-  clientSecret:  process.env.AUTH0_CLIENT_SECRET,
-  issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
-  secret:        sessionSecret,
-  authorizationParams: {
-    response_type: 'code',
-    scope: 'openid profile email'
-  }
-}));
+const authRequired = ['AUTH0_DOMAIN', 'AUTH0_CLIENT_ID', 'AUTH0_CLIENT_SECRET', 'BASE_URL']
+  .every(k => !!process.env[k]);
 
 // Public
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
-// /api/* → 401 JSON when unauthenticated (fetch-friendly)
-app.use('/api', (req, res, next) => {
-  if (req.oidc?.isAuthenticated()) return next();
-  return res.status(401).json({ error: 'unauthenticated' });
-});
+if (authRequired) {
+  const SESSION_SECRET_VERSION = 'v1';
+  const sessionSecret = crypto
+    .createHmac('sha256', process.env.AUTH0_CLIENT_SECRET)
+    .update(`matrix-app:session-cookie:${SESSION_SECRET_VERSION}`)
+    .digest('hex');
 
-// Everything else (static + SPA) → redirect to /login when unauthenticated
-app.use((req, res, next) => {
-  if (req.oidc?.isAuthenticated()) return next();
-  return res.oidc.login({ returnTo: req.originalUrl });
-});
+  app.use(auth({
+    authRequired: false,       // gated per-route below
+    auth0Logout: true,
+    baseURL:       process.env.BASE_URL,
+    clientID:      process.env.AUTH0_CLIENT_ID,
+    clientSecret:  process.env.AUTH0_CLIENT_SECRET,
+    issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
+    secret:        sessionSecret,
+    authorizationParams: {
+      response_type: 'code',
+      scope: 'openid profile email'
+    }
+  }));
 
-// Who am I?
-app.get('/api/me', (req, res) => {
-  const u = req.oidc.user || {};
-  res.json({ email: u.email, name: u.name, picture: u.picture });
-});
+  // /api/* → 401 JSON when unauthenticated (fetch-friendly)
+  app.use('/api', (req, res, next) => {
+    if (req.oidc?.isAuthenticated()) return next();
+    return res.status(401).json({ error: 'unauthenticated' });
+  });
+
+  // Everything else (static + SPA) → redirect to /login when unauthenticated
+  app.use((req, res, next) => {
+    if (req.oidc?.isAuthenticated()) return next();
+    return res.oidc.login({ returnTo: req.originalUrl });
+  });
+
+  app.get('/api/me', (req, res) => {
+    const u = req.oidc.user || {};
+    res.json({ email: u.email, name: u.name, picture: u.picture });
+  });
+} else {
+  console.warn('[matrix] Auth0 env vars not set — running without authentication (local dev mode)');
+  app.get('/api/me', (_req, res) => res.json({ anonymous: true }));
+}
 
 app.get('/api/members', (_req, res) => res.json(members));
 
@@ -242,4 +245,7 @@ app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] })
 app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`[matrix] listening on ${PORT}`));
+// Bind to loopback only in local dev so nobody on the same LAN can reach us.
+// On Railway (RAILWAY_ENVIRONMENT is set) we must bind to 0.0.0.0 for the proxy.
+const HOST = process.env.HOST || (process.env.RAILWAY_ENVIRONMENT ? '0.0.0.0' : '127.0.0.1');
+app.listen(PORT, HOST, () => console.log(`[matrix] listening on ${HOST}:${PORT}`));
