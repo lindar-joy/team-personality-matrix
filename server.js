@@ -109,17 +109,24 @@ app.set('trust proxy', true);
 app.use(express.json({ limit: '200kb' }));
 
 app.use((req, res, next) => {
-  // Log the request, incoming cookie names, and any Set-Cookie names we send
-  // back. Purely diagnostic — helps see whether the browser is actually
-  // sending the transaction cookie on /callback.
+  // Diagnostic logger. Dumps the FULL Set-Cookie header so we can see
+  // Domain / Path / SameSite / Secure / HttpOnly on every response —
+  // necessary to debug why a browser might refuse to store the cookie.
   const cookieNames = (req.headers.cookie || '')
     .split(';').map(c => c.split('=')[0].trim()).filter(Boolean).join(',') || '(none)';
   res.on('finish', () => {
     const set = res.getHeader('set-cookie');
-    const setNames = Array.isArray(set)
-      ? set.map(s => s.split('=')[0]).join(',')
-      : (typeof set === 'string' ? set.split('=')[0] : '');
-    console.log(`${new Date().toISOString()} ${req.method} ${req.path} status=${res.statusCode} in-cookies=[${cookieNames}] set-cookie=[${setNames || '(none)'}]`);
+    // Truncate the cookie value itself (keep attrs) so logs stay readable.
+    const truncateCookie = (s) => {
+      const [head, ...attrs] = s.split(';');
+      const [name, value = ''] = head.split('=');
+      const shortValue = value.length > 20 ? `${value.slice(0, 12)}…[${value.length}ch]` : value;
+      return [`${name}=${shortValue}`, ...attrs].join(';');
+    };
+    const setFull = Array.isArray(set)
+      ? set.map(truncateCookie).join(' | ')
+      : (typeof set === 'string' ? truncateCookie(set) : '(none)');
+    console.log(`${new Date().toISOString()} ${req.method} ${req.path} status=${res.statusCode} host=${req.headers.host} xfp=${req.headers['x-forwarded-proto'] || ''} in=[${cookieNames}] set=[${setFull}]`);
   });
   next();
 });
