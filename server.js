@@ -126,6 +126,18 @@ app.use((req, _res, next) => {
 const authRequired = ['AUTH0_DOMAIN', 'AUTH0_CLIENT_ID', 'AUTH0_CLIENT_SECRET', 'BASE_URL']
   .every(k => !!process.env[k]);
 
+// Loud startup logs so misconfigured BASE_URL is obvious in Railway logs.
+// BASE_URL MUST point at this app's own public origin — if it points at
+// another service (e.g. a different Railway app sharing the Auth0 tenant),
+// Auth0 will redirect the user back to that other service instead of this
+// one, and the auth_verification cookie set here will never be read.
+if (process.env.BASE_URL) {
+  console.log(`[matrix] BASE_URL = ${process.env.BASE_URL}`);
+}
+if (process.env.AUTH0_DOMAIN) {
+  console.log(`[matrix] AUTH0_DOMAIN = ${process.env.AUTH0_DOMAIN}`);
+}
+
 // Public
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
@@ -254,13 +266,27 @@ app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] })
 app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
 // Stale /callback hits (refreshed tab, expired transaction cookie, cookie
-// clobbered by another app) throw BadRequestError from express-openid-connect.
-// Instead of 500-ing the user, bounce them back to / and let the SDK start a
-// fresh login round-trip.
+// clobbered by another app, or — most commonly — BASE_URL pointing at a
+// different service so Auth0 redirected the user to the wrong app). Instead
+// of auto-redirecting (which creates a redirect loop when BASE_URL is wrong),
+// render a static page with a manual retry link. The user has to click it,
+// which gives them (and us) a chance to see what went wrong.
 app.use((err, req, res, next) => {
   if (err && err.name === 'BadRequestError' && req.path === '/callback') {
-    console.warn(`[matrix] stale callback (${err.message}) — restarting login`);
-    return res.redirect('/');
+    console.warn(`[matrix] callback failed (${err.message}) BASE_URL=${process.env.BASE_URL}`);
+    res.status(400).send(`<!doctype html>
+<meta charset="utf-8">
+<title>Session couldn't be verified</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; max-width: 420px; margin: 80px auto; padding: 0 20px; color: #1a1a2e; }
+  h1 { font-size: 20px; color: #0B2595; margin-bottom: 8px; }
+  p  { font-size: 14px; color: #5B6593; line-height: 1.5; }
+  a.btn { display: inline-block; margin-top: 16px; padding: 10px 18px; background: #0B2595; color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px; }
+</style>
+<h1>Session couldn't be verified</h1>
+<p>We couldn't complete the login. This usually means a stale browser tab or a cookie that was cleared. Try again from the start.</p>
+<a class="btn" href="/login">Sign in</a>`);
+    return;
   }
   return next(err);
 });
