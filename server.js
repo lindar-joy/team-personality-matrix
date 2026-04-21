@@ -108,8 +108,19 @@ const app = express();
 app.set('trust proxy', true);
 app.use(express.json({ limit: '200kb' }));
 
-app.use((req, _res, next) => {
-  console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
+app.use((req, res, next) => {
+  // Log the request, incoming cookie names, and any Set-Cookie names we send
+  // back. Purely diagnostic — helps see whether the browser is actually
+  // sending the transaction cookie on /callback.
+  const cookieNames = (req.headers.cookie || '')
+    .split(';').map(c => c.split('=')[0].trim()).filter(Boolean).join(',') || '(none)';
+  res.on('finish', () => {
+    const set = res.getHeader('set-cookie');
+    const setNames = Array.isArray(set)
+      ? set.map(s => s.split('=')[0]).join(',')
+      : (typeof set === 'string' ? set.split('=')[0] : '');
+    console.log(`${new Date().toISOString()} ${req.method} ${req.path} status=${res.statusCode} in-cookies=[${cookieNames}] set-cookie=[${setNames || '(none)'}]`);
+  });
   next();
 });
 
@@ -171,6 +182,11 @@ if (authRequired) {
     transactionCookie: { name: 'matrix_auth_verification' },
     authorizationParams: {
       response_type: 'code',
+      // Force query mode so Auth0 returns via a GET redirect. If left
+      // unset, express-openid-connect defaults to form_post which is a
+      // cross-site POST — SameSite=Lax transaction cookies are dropped
+      // by the browser on cross-site POSTs and /callback would fail.
+      response_mode: 'query',
       scope: 'openid profile email'
     }
   }));
