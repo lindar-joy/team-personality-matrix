@@ -156,11 +156,19 @@ if (authRequired) {
     clientSecret:  process.env.AUTH0_CLIENT_SECRET,
     issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
     secret:        sessionSecret,
-    // Namespace cookies so we don't clash with other MrQ apps sharing a parent
-    // domain / Auth0 tenant. Without this, another app's /login can overwrite
-    // the default `auth_verification` cookie and the /callback fails.
-    session: { name: 'matrix.sid' },
-    transactionCookie: { name: 'matrix.auth_verification' },
+    // Namespace cookies so we don't clash with other MrQ apps sharing the
+    // Auth0 tenant. Using underscores (no dots) to avoid any cookie-jar edge
+    // cases. Pin cookie attributes explicitly so nothing implicit can change.
+    session: {
+      name: 'matrix_sid',
+      cookie: {
+        httpOnly: true,
+        secure:   true,
+        sameSite: 'Lax',
+        path:     '/'
+      }
+    },
+    transactionCookie: { name: 'matrix_auth_verification' },
     authorizationParams: {
       response_type: 'code',
       scope: 'openid profile email'
