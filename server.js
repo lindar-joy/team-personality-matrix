@@ -102,6 +102,10 @@ function findById(id) {
 // HTTP
 // ---------------------------------------------------------------------------
 const app = express();
+// Railway (and most PaaS) terminate TLS at the edge and forward HTTP to us.
+// Trust the proxy so req.secure / X-Forwarded-Proto are honoured — required for
+// Secure cookies to be set correctly during the Auth0 round-trip.
+app.set('trust proxy', true);
 app.use(express.json({ limit: '200kb' }));
 
 app.use((req, _res, next) => {
@@ -140,6 +144,11 @@ if (authRequired) {
     clientSecret:  process.env.AUTH0_CLIENT_SECRET,
     issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
     secret:        sessionSecret,
+    // Namespace cookies so we don't clash with other MrQ apps sharing a parent
+    // domain / Auth0 tenant. Without this, another app's /login can overwrite
+    // the default `auth_verification` cookie and the /callback fails.
+    session: { name: 'matrix.sid' },
+    transactionCookie: { name: 'matrix.auth_verification' },
     authorizationParams: {
       response_type: 'code',
       scope: 'openid profile email'
@@ -243,6 +252,18 @@ app.post('/api/members/bulk', async (req, res) => {
 // --- Static frontend ---
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
 app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+
+// Stale /callback hits (refreshed tab, expired transaction cookie, cookie
+// clobbered by another app) throw BadRequestError from express-openid-connect.
+// Instead of 500-ing the user, bounce them back to / and let the SDK start a
+// fresh login round-trip.
+app.use((err, req, res, next) => {
+  if (err && err.name === 'BadRequestError' && req.path === '/callback') {
+    console.warn(`[matrix] stale callback (${err.message}) — restarting login`);
+    return res.redirect('/');
+  }
+  return next(err);
+});
 
 const PORT = process.env.PORT || 8080;
 // Bind to loopback only in local dev so nobody on the same LAN can reach us.
